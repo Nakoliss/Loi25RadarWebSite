@@ -293,7 +293,7 @@ export default async function PrivacyPage({
                     privacy@solutionsimpactweb.com
                   </a>
                   <br />
-                  Téléphone: (438) 503-3698
+                  Téléphone: (438) 503-3898
                   <br />
                   Adresse: Montréal, QC Canada
                 </p>
