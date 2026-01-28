@@ -1,0 +1,328 @@
+{
+  "company": {
+    "name": "Solutions Impact Web",
+    "division": "Une division de Nakoliss Studios",
+    "description": "Sites web modernes, visibilité Google et moteurs de réponses propulsés par l'intelligence artificielle, avec conformité Loi 25.",
+    "email": "info@solutionsimpactweb.com",
+    "phone": "(438)503-3698",
+    "address": "Montréal, QC Canada",
+    "responsible": {
+      "title": "Responsable de la protection des renseignements personnels",
+      "name": "Daniel Germain",
+      "email": "privacy@solutionsimpactweb.com"
+    }
+  },
+  "navigation": {
+    "cta": "Scan Gratuit",
+    "scan": "Scan",
+    "home": "Accueil",
+    "about": "À propos",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "contact": "Contact",
+    "pricing": "Tarifs"
+  },
+  "hero": {
+    "title": "Rendez votre site conforme à la Loi 25 sans casse-tête",
+    "subtitle": "Diagnostic, mise en place des éléments essentiels, et surveillance continue. Scan gratuit en 30 secondes.",
+    "cta": "Faire le scan gratuit",
+    "platforms": "Wix, WordPress, Shopify, sites sur mesure",
+    "delay": "2 à 5 jours ouvrables",
+    "compliance_badge": "Conformité Loi 25 du Québec",
+    "supported_platforms": "✅ Plateformes supportées",
+    "avg_delay_label": "⏱️ Délai moyen :",
+    "stats": {
+      "fine": {
+        "value": "25M$",
+        "label": "Amende maximale pour non-conformité"
+      },
+      "scan": {
+        "value": "30s",
+        "label": "Pour scanner votre site gratuitement"
+      },
+      "time": {
+        "value": "5 jours",
+        "label": "Délai moyen de mise en conformité"
+      }
+    }
+  },
+  "audit": {
+    "sectionTitle": "Scan Gratuit",
+    "subtitle": "Détection des principaux cookies/traceurs + score de base",
+    "placeholder": "Entrez l'URL de votre site (ex: https://monsite.com)",
+    "button": "Lancer le scan",
+    "scanning": "Analyse en cours... (30 secondes max)",
+    "score": "Score de Conformité",
+    "riskLevel": "Niveau de Risque",
+    "issuesFound": "Problèmes détectés",
+    "scanTime": "Temps d'analyse",
+    "seconds": "secondes",
+    "riskLevels": {
+      "critical": "Critique",
+      "high": "Élevé",
+      "medium": "Moyen",
+      "low": "Faible"
+    },
+    "criteria": {
+      "privacyPolicy": "Politique de confidentialité",
+      "https": "HTTPS (SSL)",
+      "trackers": "Cookies/Traceurs",
+      "consentBanner": "Bannière de consentement",
+      "secureForms": "Formulaires conformes"
+    },
+    "status": {
+      "detected": "Détecté",
+      "notDetected": "Non détecté",
+      "enabled": "Activé",
+      "notEnabled": "Non activé",
+      "present": "Présent",
+      "absent": "Absent"
+    },
+    "recommendations": "Recommandations",
+    "cta": {
+      "fullAudit": "Demander un devis",
+      "download": "Télécharger le résumé",
+      "scanAnother": "Scanner un autre site"
+    },
+    "error": {
+      "invalidUrl": "URL invalide. Veuillez entrer une URL complète (ex: https://example.com)",
+      "timeout": "L'analyse a pris trop de temps. Veuillez réessayer.",
+      "failed": "Impossible d'analyser ce domaine."
+    }
+  },
+  "whyLoi25": {
+    "title": "Pourquoi la Loi 25?",
+    "description": "La Loi 25 (Loi modernisant des dispositions législatives en matière de protection des renseignements personnels) est la réforme québécoise sur la protection des données personnelles, en vigueur depuis septembre 2023.",
+    "risks": {
+      "title": "Risques de Non-Conformité",
+      "items": [
+        "Amendes jusqu'à 25 millions $ ou 4% du chiffre d'affaires",
+        "Atteinte à la réputation de l'entreprise",
+        "Perte de confiance des clients",
+        "Poursuites par la CAI (Commission d'accès à l'information)"
+      ]
+    },
+    "benefits": {
+      "title": "Avantages de la Conformité",
+      "items": [
+        "Protection juridique complète",
+        "Confiance accrue des clients",
+        "Avantage concurrentiel",
+        "Respect des droits des utilisateurs"
+      ]
+    },
+    "requirements": {
+      "title": "Ce que la Loi 25 exige",
+      "items": [
+        "Bannière de consentement pour les cookies",
+        "Politique de confidentialité accessible",
+        "Responsable de la protection des RP identifié",
+        "Consentement explicite pour la collecte de données",
+        "Droit à l'oubli et portabilité des données"
+      ]
+    }
+  },
+  "features": {
+    "title": "Ce que notre scan détecte",
+    "items": [
+      {
+        "title": "Politique de Confidentialité",
+        "description": "Vérification de la présence et accessibilité de votre politique"
+      },
+      {
+        "title": "Protocole HTTPS",
+        "description": "Validation du certificat SSL pour la sécurité des données"
+      },
+      {
+        "title": "Cookies & Traceurs",
+        "description": "Détection des scripts de suivi (Analytics, Meta Pixel, GTM, etc.)"
+      },
+      {
+        "title": "Bannière de Consentement",
+        "description": "Vérification du système de gestion des cookies (CMP)"
+      },
+      {
+        "title": "Formulaires Conformes",
+        "description": "Analyse des formulaires de contact et newsletter"
+      }
+    ],
+    "limitations": {
+      "title": "Limitations du Scan Gratuit",
+      "items": [
+        "Analyse basique (5 critères clés)",
+        "Pas de rapport détaillé",
+        "Pas de corrections incluses",
+        "Pas de suivi dans le temps"
+      ]
+    },
+    "cta": "Obtenez une mise en conformité complète avec nos forfaits"
+  },
+  "pricing": {
+    "title": "Nos Forfaits",
+    "subtitle": "Rendez votre site plus conforme à la Loi 25, sans casse-tête",
+    "platforms": "Plateformes supportées",
+    "platformsList": "Wix, WordPress, Shopify, sites sur mesure",
+    "delay": "Délai moyen : 2 à 5 jours ouvrables",
+    "tiers": {
+      "free": {
+        "name": "Scan Gratuit",
+        "price": "0",
+        "period": "",
+        "description": "Point de départ",
+        "features": [
+          "Détection des principaux cookies/traceurs",
+          "Score de base + constats principaux"
+        ],
+        "cta": "Faire le scan gratuit"
+      },
+      "express": {
+        "name": "Conformité Express",
+        "price": "499",
+        "period": "prix unique",
+        "description": "Site vitrine / PME simple",
+        "features": [
+          "Mise à jour des pages essentielles (confidentialité)",
+          "Mise en place d'une bannière de consentement (CMP)",
+          "Affichage du responsable RP (titre + coordonnées)",
+          "Vérification finale + mini-compte rendu"
+        ],
+        "cta": "Choisir Express"
+      },
+      "pro": {
+        "name": "Conformité Pro",
+        "price": "999",
+        "period": "prix unique",
+        "popular": true,
+        "description": "Sites plus actifs (pubs, pixels, formulaires)",
+        "features": [
+          "Tout Express inclus",
+          "Revue approfondie des formulaires et collecte",
+          "Paramétrage complet du consentement (catégories)",
+          "Rapport «priorités» détaillé"
+        ],
+        "cta": "Choisir Pro"
+      },
+      "monitoring": {
+        "name": "Monitoring",
+        "price": "79",
+        "period": "/ mois / domaine",
+        "description": "Rester conforme dans le temps",
+        "features": [
+          "Scan hebdomadaire automatisé",
+          "Alertes courriel en cas de régression",
+          "Rapport mensuel + historique"
+        ],
+        "cta": "Démarrer le monitoring"
+      }
+    },
+    "addons": {
+      "title": "Add-ons (au besoin)",
+      "items": [
+        {
+          "name": "Site e-commerce / complexe",
+          "description": "Apps multiples, multi-domaines, multi-langues",
+          "price": "Sur devis"
+        },
+        {
+          "name": "Domaine additionnel (monitoring)",
+          "price": "+29$ / mois"
+        },
+        {
+          "name": "Installation done-for-you",
+          "description": "Si vous ne voulez rien toucher",
+          "price": "+199$ (one-shot)"
+        }
+      ]
+    },
+    "note": "Licence CMP (bannière de consentement) facturée séparément au coût du fournisseur.",
+    "disclaimer": "Service technique d'accompagnement : ce n'est pas un avis juridique.",
+    "currency": "$"
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "items": [
+      {
+        "question": "Qu'est-ce que la Loi 25?",
+        "answer": "La Loi 25 est une loi québécoise qui modernise la protection des renseignements personnels. Elle impose des obligations strictes aux entreprises concernant la collecte, l'utilisation et la protection des données personnelles."
+      },
+      {
+        "question": "C'est quoi le Monitoring?",
+        "answer": "Un contrôle automatisé qui détecte les changements (nouveaux scripts, nouveaux traceurs, modifications de formulaires) et vous alerte par courriel."
+      },
+      {
+        "question": "Pourquoi scanner chaque semaine?",
+        "answer": "Parce qu'un site change souvent sans qu'on le remarque (plugins, apps, pixels, GTM, mises à jour). Le monitoring évite les régressions."
+      },
+      {
+        "question": "Est-ce compatible Wix / WordPress / Shopify?",
+        "answer": "Oui. On installe via l'admin (snippet/app/plugin selon la plateforme)."
+      },
+      {
+        "question": "Combien de temps ça prend?",
+        "answer": "Généralement 2 à 5 jours ouvrables après réception des accès (et selon la complexité)."
+      },
+      {
+        "question": "Qu'est-ce que je dois fournir?",
+        "answer": "Accès admin au site + accès à vos outils marketing (si applicable : GTM, pixels, etc.)."
+      },
+      {
+        "question": "Quelles sont les pénalités en cas de non-conformité?",
+        "answer": "Les pénalités peuvent atteindre 25 millions de dollars ou 4% du chiffre d'affaires mondial. La CAI peut également ordonner des mesures correctives."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Demander un devis",
+    "subtitle": "Obtenez une évaluation personnalisée pour votre mise en conformité",
+    "form": {
+      "name": "Nom",
+      "email": "Courriel",
+      "phone": "Téléphone (optionnel)",
+      "domain": "URL du site à mettre en conformité",
+      "auditType": "Forfait souhaité",
+      "message": "Message (optionnel)",
+      "submit": "Envoyer ma demande",
+      "selectType": "Sélectionnez un forfait"
+    },
+    "success": "Merci! Nous vous recontacterons dans les 24 heures ouvrables.",
+    "error": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "footer": {
+    "description": "Sites web modernes, visibilité Google et moteurs de réponses propulsés par l'intelligence artificielle, avec conformité Loi 25.",
+    "legalPages": "Pages Légales",
+    "complianceCenter": "Centre de conformité",
+    "cookiePolicy": "Politique des cookies",
+    "dataRequest": "Demande de données",
+    "compliance": "Conformité",
+    "loi25": {
+      "title": "Loi 25",
+      "description": "Registre et politiques à jour"
+    },
+    "pipeda": {
+      "title": "PIPEDA",
+      "description": "Aligné sur la LPRPDE (PIPEDA)"
+    },
+    "consent": {
+      "title": "Consentement",
+      "description": "Gestion dynamique des préférences"
+    },
+    "preferencesButton": "Paramètres des cookies",
+    "copyright": "© 2026 Solutions Impact Web Inc. Tous droits réservés.",
+    "bottomLinks": {
+      "privacy": "Confidentialité",
+      "cookies": "Cookies",
+      "dataRequests": "Demandes de données"
+    }
+  },
+  "common": {
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer"
+  },
+  "cookies": {
+    "title": "Nous utilisons des cookies",
+    "description": "Ce site utilise des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos préférences.",
+    "accept": "Tout accepter",
+    "reject": "Tout refuser",
+    "customize": "Personnaliser"
+  }
+}
