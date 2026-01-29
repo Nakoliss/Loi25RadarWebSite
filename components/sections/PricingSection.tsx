@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Check, Sparkles, Shield, Eye, Plus, AlertCircle } from "lucide-react";
 
 export function PricingSection() {
   const t = useTranslations("pricing");
+  const locale = useLocale();
 
   const tiers = [
     {
@@ -78,7 +79,7 @@ export function PricingSection() {
         </motion.div>
 
         {/* Main Tiers */}
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch justify-items-center max-w-5xl mx-auto">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.key}
@@ -116,8 +117,17 @@ export function PricingSection() {
                 <CardContent className="flex flex-1 flex-col">
                   <div className="mb-6">
                     <span className="text-4xl font-bold text-white">
-                      {t("currency")}
-                      {tier.price}
+                      {locale === "fr" ? (
+                        <>
+                          {tier.price}
+                          {t("currency")}
+                        </>
+                      ) : (
+                        <>
+                          {t("currency")}
+                          {tier.price}
+                        </>
+                      )}
                     </span>
                     {tier.period && (
                       <span className="ml-1 text-sm text-muted-foreground">
