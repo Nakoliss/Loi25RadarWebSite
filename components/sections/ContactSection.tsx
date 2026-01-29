@@ -63,7 +63,11 @@ export function ContactSection() {
     }
   };
 
-  const auditTypes = ["Starter - $297", "Pro - $597", "Agency - Sur devis"];
+  const auditTypes = [
+    t("form.options.scanOnly"),
+    t("form.options.scanFix"),
+    t("form.options.complianceManager"),
+  ];
 
   return (
     <section id="contact" className="py-20 sm:py-32 bg-card/50">

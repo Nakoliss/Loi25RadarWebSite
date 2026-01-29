@@ -47,8 +47,8 @@
     }
   },
   "audit": {
-    "sectionTitle": "Free Scan",
-    "subtitle": "Detection of main cookies/trackers + base score",
+    "sectionTitle": "Free Basic Scan",
+    "subtitle": "Quick analysis of your homepage - For a complete analysis, see our packages",
     "placeholder": "Enter your website URL (e.g., https://mysite.com)",
     "button": "Start Scan",
     "scanning": "Analyzing... (30 seconds max)",
@@ -159,60 +159,51 @@
   },
   "pricing": {
     "title": "Our Plans",
-    "subtitle": "Make your website Law 25 compliant, hassle-free",
+    "subtitle": "Solutions tailored to your compliance needs",
     "platforms": "Supported Platforms",
     "platformsList": "Wix, WordPress, Shopify, custom websites",
     "delay": "Average delay: 2 to 5 business days",
     "tiers": {
-      "free": {
-        "name": "Free Scan",
-        "price": "0",
-        "period": "",
-        "description": "Starting point",
-        "features": [
-          "Detection of main cookies/trackers",
-          "Base score + main findings"
-        ],
-        "cta": "Start Free Scan"
-      },
-      "express": {
-        "name": "Express Compliance",
-        "price": "499",
+      "scanOnly": {
+        "name": "Complete Scan",
+        "price": "199",
         "period": "one-time",
-        "description": "Showcase site / Simple SMB",
+        "description": "For tech-savvy businesses who want to know everything",
         "features": [
-          "Update essential pages (privacy)",
-          "Cookie consent banner setup (CMP)",
-          "Display privacy officer (title + contact)",
-          "Final verification + mini-report"
+          "Full website analysis (all pages)",
+          "Detailed compliance report (PDF)",
+          "Complete list of issues with priorities",
+          "Step-by-step DIY fixes guide"
         ],
-        "cta": "Choose Express"
+        "cta": "Choose Complete Scan"
       },
-      "pro": {
-        "name": "Pro Compliance",
-        "price": "999",
+      "scanFix": {
+        "name": "Complete Scan + Fix",
+        "price": "699",
         "period": "one-time",
         "popular": true,
-        "description": "Active sites (ads, pixels, forms)",
+        "description": "For businesses who want it done right",
         "features": [
-          "Everything in Express",
-          "In-depth review of forms and collection points",
-          "Complete consent setup (categories)",
-          "Detailed priorities report"
+          "Everything in Complete Scan",
+          "We fix all issues",
+          "Compliance certificate",
+          "30-day support"
         ],
-        "cta": "Choose Pro"
+        "cta": "Choose Scan + Fix"
       },
-      "monitoring": {
-        "name": "Monitoring",
-        "price": "79",
-        "period": "/ month / domain",
-        "description": "Stay compliant over time",
+      "complianceManager": {
+        "name": "Compliance Manager",
+        "price": "699",
+        "period": "+ $79/month",
+        "description": "For complete peace of mind",
         "features": [
-          "Weekly automated scan",
-          "Email alerts for regressions",
-          "Monthly report + history"
+          "Everything in Complete Scan + Fix",
+          "Monthly automated scans",
+          "Instant alerts if issues detected",
+          "Priority support",
+          "Annual compliance report"
         ],
-        "cta": "Start Monitoring"
+        "cta": "Choose Compliance Manager"
       }
     },
     "addons": {
@@ -282,7 +273,12 @@
       "auditType": "Desired package",
       "message": "Message (optional)",
       "submit": "Send My Request",
-      "selectType": "Select a package"
+      "selectType": "Select a package",
+      "options": {
+        "scanOnly": "Complete Scan - $199",
+        "scanFix": "Complete Scan + Fix - $699",
+        "complianceManager": "Compliance Manager - $699 + $79/month"
+      }
     },
     "success": "Thank you! We will get back to you within 24 business hours.",
     "error": "An error occurred. Please try again."

@@ -47,8 +47,8 @@
     }
   },
   "audit": {
-    "sectionTitle": "Scan Gratuit",
-    "subtitle": "Détection des principaux cookies/traceurs + score de base",
+    "sectionTitle": "Scan de Base Gratuit",
+    "subtitle": "Analyse rapide de votre page d'accueil - Pour une analyse complète, consultez nos forfaits",
     "placeholder": "Entrez l'URL de votre site (ex: https://monsite.com)",
     "button": "Lancer le scan",
     "scanning": "Analyse en cours... (30 secondes max)",
@@ -159,60 +159,51 @@
   },
   "pricing": {
     "title": "Nos Forfaits",
-    "subtitle": "Rendez votre site plus conforme à la Loi 25, sans casse-tête",
+    "subtitle": "Des solutions adaptées à vos besoins de conformité",
     "platforms": "Plateformes supportées",
     "platformsList": "Wix, WordPress, Shopify, sites sur mesure",
-    "delay": "Délai moyen : 2 à 5 jours ouvrables",
+    "delay": "Délai moyen : 2 à 5 jours",
     "tiers": {
-      "free": {
-        "name": "Scan Gratuit",
-        "price": "0",
-        "period": "",
-        "description": "Point de départ",
-        "features": [
-          "Détection des principaux cookies/traceurs",
-          "Score de base + constats principaux"
-        ],
-        "cta": "Faire le scan gratuit"
-      },
-      "express": {
-        "name": "Conformité Express",
-        "price": "499",
+      "scanOnly": {
+        "name": "Scan Complet",
+        "price": "199",
         "period": "prix unique",
-        "description": "Site vitrine / PME simple",
+        "description": "Pour les entreprises tech-savvy qui veulent tout savoir",
         "features": [
-          "Mise à jour des pages essentielles (confidentialité)",
-          "Mise en place d'une bannière de consentement (CMP)",
-          "Affichage du responsable RP (titre + coordonnées)",
-          "Vérification finale + mini-compte rendu"
+          "Analyse complète du site (toutes les pages)",
+          "Rapport de conformité détaillé (PDF)",
+          "Liste complète des problèmes avec priorités",
+          "Guide de corrections DIY étape par étape"
         ],
-        "cta": "Choisir Express"
+        "cta": "Choisir Scan Complet"
       },
-      "pro": {
-        "name": "Conformité Pro",
-        "price": "999",
+      "scanFix": {
+        "name": "Scan Complet + Correction",
+        "price": "699",
         "period": "prix unique",
         "popular": true,
-        "description": "Sites plus actifs (pubs, pixels, formulaires)",
+        "description": "Pour ceux qui veulent que ce soit bien fait",
         "features": [
-          "Tout Express inclus",
-          "Revue approfondie des formulaires et collecte",
-          "Paramétrage complet du consentement (catégories)",
-          "Rapport «priorités» détaillé"
+          "Tout inclus dans Scan Complet",
+          "Nous corrigeons tous les problèmes",
+          "Certificat de conformité",
+          "Support de 30 jours"
         ],
-        "cta": "Choisir Pro"
+        "cta": "Choisir Analyse + Correction"
       },
-      "monitoring": {
-        "name": "Monitoring",
-        "price": "79",
-        "period": "/ mois / domaine",
-        "description": "Rester conforme dans le temps",
+      "complianceManager": {
+        "name": "Gestionnaire de Conformité",
+        "price": "699",
+        "period": "+ 79$/mois",
+        "description": "Pour la tranquillité d'esprit totale",
         "features": [
-          "Scan hebdomadaire automatisé",
-          "Alertes courriel en cas de régression",
-          "Rapport mensuel + historique"
+          "Tout inclus dans Scan Complet + Correction",
+          "Scans automatisés mensuels",
+          "Alertes instantanées si problèmes détectés",
+          "Support prioritaire",
+          "Rapport annuel de conformité"
         ],
-        "cta": "Démarrer le monitoring"
+        "cta": "Choisir Gestionnaire"
       }
     },
     "addons": {
@@ -282,7 +273,12 @@
       "auditType": "Forfait souhaité",
       "message": "Message (optionnel)",
       "submit": "Envoyer ma demande",
-      "selectType": "Sélectionnez un forfait"
+      "selectType": "Sélectionnez un forfait",
+      "options": {
+        "scanOnly": "Scan Complet - 199$",
+        "scanFix": "Scan Complet + Correction - 699$",
+        "complianceManager": "Gestionnaire de Conformité - 699$ + 79$/mois"
+      }
     },
     "success": "Merci! Nous vous recontacterons dans les 24 heures ouvrables.",
     "error": "Une erreur est survenue. Veuillez réessayer."
