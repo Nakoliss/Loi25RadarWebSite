@@ -90,10 +90,10 @@ export function PricingSection() {
               className="relative flex h-full flex-col"
             >
               {tier.popular && (
-                <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+                <div className="absolute -top-3 right-4 z-10">
                   <Badge variant="success" className="shadow-lg">
                     <Sparkles className="mr-1 h-3 w-3" />
-                    Recommandé
+                    {t("recommendedBadge")}
                   </Badge>
                 </div>
               )}

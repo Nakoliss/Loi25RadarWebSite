@@ -29,6 +29,8 @@
     "platforms": "Wix, WordPress, Shopify, custom websites",
     "delay": "2 to 5 business days",
     "compliance_badge": "Quebec Law 25 Compliance",
+    "new_badge": "🚀 New for 2026",
+    "secondary_cta": "View plans",
     "supported_platforms": "✅ Supported Platforms",
     "avg_delay_label": "⏱️ Average Delay:",
     "stats": {
@@ -81,6 +83,66 @@
       "absent": "Absent"
     },
     "recommendations": "Recommendations",
+    "detailsTitle": "Detailed results",
+    "results": {
+      "scoreLabel": "Your compliance score: {passed}/{total} ({percent}%)"
+    },
+    "resultsCta": {
+      "needsHelp": "Need help fixing these issues?",
+      "report": "Get the full report ($199)",
+      "fixAll": "Fix everything ($699)",
+      "recommended": "Recommended",
+      "congrats": "🎉 Congratulations! Your site looks compliant.",
+      "maintain": "Maintain compliance ($699 + $79/month)"
+    },
+    "criteriaDetails": {
+      "privacyPolicy": {
+        "pass": {
+          "title": "Privacy policy",
+          "description": "A visible privacy policy was found on your site."
+        },
+        "fail": {
+          "title": "Missing privacy policy",
+          "description": "No privacy policy was detected. Law 25 requires a clear and accessible policy.",
+          "action": "Add a privacy policy"
+        }
+      },
+      "https": {
+        "pass": {
+          "title": "HTTPS enabled",
+          "description": "Your site uses a valid SSL certificate to secure data."
+        },
+        "fail": {
+          "title": "HTTPS not enabled",
+          "description": "Your site does not use HTTPS. Data in transit is not encrypted.",
+          "action": "Enable an SSL certificate"
+        }
+      },
+      "cookieConsent": {
+        "pass": {
+          "title": "Cookie management compliant",
+          "noTrackersDescription": "No trackers detected on your site. No consent banner is required.",
+          "withBannerDescription": "Trackers detected with a consent banner present. Compliant with Law 25."
+        },
+        "fail": {
+          "title": "Missing consent banner",
+          "description": "Trackers were detected (Google Analytics, Meta Pixel) but no consent banner is present. Law 25 requires explicit consent before cookies are activated.",
+          "action": "Install a consent banner (CMP)",
+          "extra": "Detected trackers: {trackers}"
+        }
+      },
+      "responsiblePerson": {
+        "pass": {
+          "title": "Responsible person identified",
+          "description": "The person responsible for data protection is identified on your site."
+        },
+        "fail": {
+          "title": "Responsible person not listed",
+          "description": "Law 25 requires publicly identifying the person responsible for personal information protection (name and contact details).",
+          "action": "Add the responsible person to the footer or contact page"
+        }
+      }
+    },
     "recommendationMessages": {
       "privacyPolicy": "Add a visible privacy policy page.",
       "https": "Enable HTTPS with a valid SSL certificate.",
@@ -89,6 +151,41 @@
       "cookieConsent": "Make sure consent is obtained before loading trackers/cookies.",
       "secureForms": "Ensure forms collect proper consent.",
       "responsiblePerson": "Identify a privacy officer on your site."
+    },
+    "postScan": {
+      "needsHelpTitle": "Need help fixing these issues?",
+      "option1": {
+        "title": "Option 1 - Detailed report ($199)",
+        "items": [
+          "Detailed analysis of each issue",
+          "Step-by-step fix guide",
+          "Screenshots of what's wrong",
+          "Priority recommendations"
+        ],
+        "cta": "Get the report →"
+      },
+      "option2": {
+        "title": "Option 2 - We take care of everything ($699)",
+        "badge": "Recommended",
+        "items": [
+          "Full fixes in 2-5 days",
+          "Compliance certificate",
+          "30-day support",
+          "Compliance guarantee"
+        ],
+        "cta": "Fix my site →"
+      },
+      "congratsTitle": "Congratulations! Your site looks compliant. 🎉",
+      "monitoring": {
+        "title": "Compliance Manager ($699 + $79/month)",
+        "items": [
+          "Monthly automated scans",
+          "Alerts if issues are detected",
+          "Annual report for your records",
+          "Priority support"
+        ],
+        "cta": "Protect my compliance →"
+      }
     },
     "cta": {
       "fullAudit": "Request a Quote",
@@ -145,28 +242,26 @@
         "description": "SSL certificate validation for data security"
       },
       {
-        "title": "Cookies & Trackers",
-        "description": "Detection of tracking scripts (Analytics, Meta Pixel, GTM, etc.)"
+        "title": "Cookie Consent",
+        "description": "Checks for a visible consent mechanism"
       },
       {
-        "title": "Consent Banner",
-        "description": "Verification of cookie management system (CMP)"
-      },
-      {
-        "title": "Compliant Forms",
-        "description": "Analysis of contact and newsletter forms"
+        "title": "Privacy Officer",
+        "description": "Verifies that a responsible person is identified on the site"
       }
     ],
     "limitations": {
       "title": "Free Scan Limitations",
       "items": [
-        "Basic analysis (5 key criteria)",
+        "Basic analysis (4 key criteria)",
         "No detailed report",
         "No fixes included",
         "No ongoing monitoring"
       ]
     },
-    "cta": "Get full compliance with our packages"
+    "cta": "Get full compliance with our packages",
+    "ctaDescription": "Our full audit analyzes 12 compliance criteria with a detailed report, screenshots, and a personalized action plan.",
+    "ctaButton": "View plans"
   },
   "pricing": {
     "title": "Our Plans",
@@ -174,6 +269,7 @@
     "platforms": "Supported Platforms",
     "platformsList": "Wix, WordPress, Shopify, custom websites",
     "delay": "Average delay: 2 to 5 business days",
+    "recommendedBadge": "Recommended",
     "tiers": {
       "scanOnly": {
         "name": "Complete Scan",
@@ -245,31 +341,31 @@
     "items": [
       {
         "question": "What is Law 25?",
-        "answer": "Law 25 is a Quebec law that modernizes personal information protection. It imposes strict obligations on businesses regarding the collection, use, and protection of personal data."
+        "answer": "Law 25 (Act to modernize legislative provisions respecting the protection of personal information) is a Quebec reform that took effect in September 2023. It requires businesses to protect customers' personal data with requirements similar to the EU GDPR. Any business collecting data from Quebec residents must comply, with fines up to $25 million or 4% of worldwide revenue."
       },
       {
         "question": "What is Monitoring?",
-        "answer": "Automated monitoring that detects changes (new scripts, new trackers, form modifications) and alerts you by email."
+        "answer": "The Monitoring plan (Compliance Manager) includes monthly automated scans of your website. If new compliance issues appear (for example after a plugin update or adding new trackers), you receive an immediate email alert. This keeps you continuously compliant without having to remember to re-scan manually."
       },
       {
-        "question": "Why scan every week?",
-        "answer": "Because websites change often without notice (plugins, apps, pixels, GTM, updates). Monitoring prevents regressions."
+        "question": "Why scan regularly?",
+        "answer": "Your website changes constantly: you add plugins, update your theme, install new marketing tools (Google Analytics, Meta Pixel, etc.). Each change can affect compliance. Regular scanning automatically detects new issues before they become legal risks."
       },
       {
         "question": "Is it compatible with Wix / WordPress / Shopify?",
-        "answer": "Yes. We install via admin (snippet/app/plugin depending on the platform)."
+        "answer": "Yes! Our service works with all popular web platforms: Wix, WordPress, Shopify, Squarespace, and even custom-built sites. For the \"Complete Scan + Fix\" plan, we fix issues directly by installing the right plugins, configuring cookie banners, and adding missing policies, whatever your platform."
       },
       {
         "question": "How long does it take?",
-        "answer": "Generally 2 to 5 business days after receiving access (depending on complexity)."
+        "answer": "- Complete Scan ($199): Report delivered in 24-48h\n- Scan + Fix ($699): Your site becomes compliant in 2 to 5 business days\n- Compliance Manager ($699 + $79/month): Initial compliance in 2-5 days, then automated monthly scans"
       },
       {
         "question": "What do I need to provide?",
-        "answer": "Admin access to the site + access to your marketing tools (if applicable: GTM, pixels, etc.)."
+        "answer": "Very simple! Please provide:\n1. Your website URL\n2. Admin access to your platform (WordPress, Shopify, etc.) - ONLY for the \"Scan + Fix\" plan\n3. For the basic scan ($199), no access is required\n\nAll access is secured and removed immediately after the fixes are completed."
       },
       {
         "question": "What are the penalties for non-compliance?",
-        "answer": "Penalties can reach $25 million or 4% of global revenue. The CAI can also order corrective measures."
+        "answer": "The Commission d'accès à l'information (CAI) can impose:\n- Administrative penalties: up to $10M or 2% of worldwide revenue\n- Penal fines: up to $25M or 4% of worldwide revenue (for serious violations)\n- Private right of action: individuals can claim at least $1,000 per person\n\nThe CAI typically starts with an educational approach, but penalties are real for serious or repeated breaches."
       }
     ]
   },
@@ -285,12 +381,21 @@
       "message": "Message (optional)",
       "submit": "Send My Request",
       "selectType": "Select a package",
+      "placeholders": {
+        "name": "John Smith",
+        "email": "john@company.com",
+        "phone": "514-555-1234",
+        "domain": "mycompany.com",
+        "message": "Describe your needs..."
+      },
       "options": {
         "scanOnly": "Complete Scan - $199",
         "scanFix": "Complete Scan + Fix - $699",
         "complianceManager": "Compliance Manager - $699 + $79/month"
       }
     },
+    "successTitle": "Message sent!",
+    "sendAnother": "Send another message",
     "success": "Thank you! We will get back to you within 24 business hours.",
     "error": "An error occurred. Please try again."
   },
@@ -301,6 +406,7 @@
     "cookiePolicy": "Cookie Policy",
     "dataRequest": "Data Request",
     "compliance": "Compliance",
+    "auditHeatmap": "Audit and heatmap",
     "loi25": {
       "title": "Law 25",
       "description": "Up-to-date registry and policies"
@@ -313,6 +419,7 @@
       "title": "Consent",
       "description": "Dynamic preference management"
     },
+    "preferencesNote": "Update your consent preferences any time you wish.",
     "preferencesButton": "Cookie Settings",
     "copyright": "© 2026 Solutions Impact Web Inc. All rights reserved.",
     "bottomLinks": {
@@ -330,6 +437,18 @@
     "description": "This site uses cookies to improve your experience. You can customize your preferences.",
     "accept": "Accept All",
     "reject": "Reject All",
-    "customize": "Customize"
+    "customize": "Customize",
+    "settingsTitle": "Cookie settings",
+    "necessaryTitle": "Strictly necessary cookies",
+    "necessaryDescription": "Essential for the site to function",
+    "analyticsTitle": "Analytics cookies",
+    "analyticsDescription": "Help us understand site usage",
+    "marketingTitle": "Marketing cookies",
+    "marketingDescription": "Used for targeted advertising",
+    "savePreferences": "Save my preferences",
+    "learnMorePrefix": "Learn more in our",
+    "learnMoreAnd": "and",
+    "cookiePolicyLabel": "cookie policy",
+    "privacyPolicyLabel": "privacy policy"
   }
 }

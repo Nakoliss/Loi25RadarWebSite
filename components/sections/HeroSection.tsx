@@ -48,11 +48,18 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium text-primary">
-                {t("compliance_badge")}
-              </span>
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium text-primary">
+                  {t("compliance_badge")}
+                </span>
+              </div>
+              <div className="inline-flex items-center rounded-full border border-border/50 bg-card/40 px-3 py-1">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {t("new_badge")}
+                </span>
+              </div>
             </div>
 
             <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
@@ -77,7 +84,7 @@ export function HeroSection() {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="#pricing">Voir les forfaits</a>
+              <a href="#pricing">{t("secondary_cta")}</a>
             </Button>
           </motion.div>
 

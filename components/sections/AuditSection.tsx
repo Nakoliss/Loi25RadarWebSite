@@ -10,18 +10,10 @@ import { Badge } from "@/components/ui/badge";
 import { Loader } from "@/components/ui/loader";
 import {
   Search,
-  CheckCircle2,
-  XCircle,
   AlertTriangle,
   Download,
   RefreshCw,
   Mail,
-  Shield,
-  Lock,
-  Cookie,
-  FormInput,
-  FileText,
-  UserCheck,
 } from "lucide-react";
 
 interface AuditResult {
@@ -31,6 +23,10 @@ interface AuditResult {
   results: Record<string, boolean>;
   recommendations?: string[];
   missing?: string[];
+  details?: {
+    trackersDetected?: boolean;
+    consentBannerDetected?: boolean;
+  };
 }
 
 export function AuditSection() {
@@ -85,43 +81,11 @@ export function AuditSection() {
     }
   };
 
-  const getRiskColor = (level: string) => {
-    switch (level) {
-      case "critical":
-        return "error";
-      case "high":
-        return "warning";
-      case "medium":
-        return "secondary";
-      case "low":
-        return "success";
-      default:
-        return "default";
-    }
-  };
-
   const getRiskLevelFromScore = (score: number) => {
     if (score < 40) return "critical";
     if (score < 60) return "high";
     if (score < 80) return "medium";
     return "low";
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-400";
-    if (score >= 60) return "text-yellow-400";
-    if (score >= 40) return "text-orange-400";
-    return "text-red-400";
-  };
-
-  const criteriaIcons = {
-    privacyPolicy: FileText,
-    https: Lock,
-    trackers: Cookie,
-    consentBanner: Shield,
-    cookieConsent: Shield,
-    secureForms: FormInput,
-    responsiblePerson: UserCheck,
   };
 
   const resetAudit = () => {
@@ -130,8 +94,21 @@ export function AuditSection() {
     setError(null);
   };
 
+  const criteriaTotal = 4;
+  const criteriaKeys = [
+    "privacyPolicy",
+    "https",
+    "cookieConsent",
+    "responsiblePerson",
+  ] as const;
+
+  const passedCriteria = result
+    ? criteriaKeys.filter((key) => result.results?.[key]).length
+    : 0;
+  const percentScore = Math.round((passedCriteria / criteriaTotal) * 100);
+
   const resolvedRiskLevel = result
-    ? result.riskLevel ?? getRiskLevelFromScore(result.score)
+    ? result.riskLevel ?? getRiskLevelFromScore(percentScore)
     : "low";
 
   const recommendations = result
@@ -139,6 +116,31 @@ export function AuditSection() {
       result.recommendations ??
       []
     : [];
+
+  const contactHref = (auditType: string) =>
+    `?auditType=${encodeURIComponent(auditType)}#contact`;
+
+  const riskClasses = {
+    critical: { text: "text-red-600", bg: "bg-red-50", badge: "bg-red-100 text-red-700" },
+    high: { text: "text-orange-600", bg: "bg-orange-50", badge: "bg-orange-100 text-orange-700" },
+    medium: { text: "text-yellow-600", bg: "bg-yellow-50", badge: "bg-yellow-100 text-yellow-700" },
+    low: { text: "text-green-600", bg: "bg-green-50", badge: "bg-green-100 text-green-700" },
+  } as const;
+
+  const scoreLabel = t("results.scoreLabel", {
+    passed: passedCriteria,
+    total: criteriaTotal,
+    percent: percentScore,
+  });
+
+  const ctaCopy = t.raw("resultsCta") as {
+    needsHelp: string;
+    report: string;
+    fixAll: string;
+    recommended: string;
+    congrats: string;
+    maintain: string;
+  };
 
   return (
     <section id="audit" className="py-20 sm:py-32">
@@ -222,100 +224,144 @@ export function AuditSection() {
               exit={{ opacity: 0, y: -20 }}
               className="mt-10 space-y-6"
             >
-              {/* Score Card */}
-              <Card className="glass" glow="emerald">
-                <CardContent className="p-8">
-                  <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
-                    {/* Score */}
-                    <div className="text-center sm:text-left">
-                      <p className="text-sm text-muted-foreground">
-                        {t("score")}
-                      </p>
-                      <p
-                        className={`text-6xl font-bold ${getScoreColor(result.score)}`}
-                      >
-                        {result.score}
-                        <span className="text-2xl text-muted-foreground">
-                          /100
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* Risk Level */}
-                    <div className="text-center">
-                      <p className="mb-2 text-sm text-muted-foreground">
-                        {t("riskLevel")}
-                      </p>
-                      <Badge
-                        variant={
-                          getRiskColor(resolvedRiskLevel) as
-                            | "success"
-                            | "warning"
-                            | "error"
-                            | "secondary"
-                            | "default"
-                        }
-                        className="text-lg px-4 py-2"
-                      >
-                        {t(`riskLevels.${resolvedRiskLevel}`)}
-                      </Badge>
-                    </div>
-
-                    {/* Scan Info */}
-                    <div className="text-center sm:text-right">
-                      <p className="text-sm text-muted-foreground">
-                        {t("scanTime")}
-                      </p>
-                      <p className="text-2xl font-semibold text-white">
-                        {result.scanTime}
-                        <span className="text-sm text-muted-foreground ml-1">
-                          {t("seconds")}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Score Header */}
+              <div
+                className={`rounded-lg border border-border p-6 text-center ${riskClasses[resolvedRiskLevel].bg}`}
+              >
+                <h2 className="text-3xl font-bold text-slate-900">
+                  {passedCriteria}/{criteriaTotal}
+                </h2>
+                <p className={`${riskClasses[resolvedRiskLevel].text} mt-2`}>
+                  {scoreLabel}
+                </p>
+                <span
+                  className={`mt-3 inline-block rounded-full px-3 py-1 text-sm ${riskClasses[resolvedRiskLevel].badge}`}
+                >
+                  {t(`riskLevels.${resolvedRiskLevel}`)}
+                </span>
+              </div>
 
               {/* Criteria Results */}
-              <Card className="glass">
-                <CardHeader>
-                  <CardTitle className="text-xl">Résultats détaillés</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {Object.entries(result.results).map(([key, value]) => {
-                      const Icon =
-                        criteriaIcons[key as keyof typeof criteriaIcons] ??
-                        AlertTriangle;
-                      return (
-                        <div
-                          key={key}
-                          className={`flex items-center gap-3 rounded-lg border p-4 ${
-                            value
-                              ? "border-green-500/30 bg-green-500/10"
-                              : "border-red-500/30 bg-red-500/10"
+              <div className="space-y-4">
+                {criteriaKeys.map((key) => {
+                  const passed = Boolean(result.results?.[key]);
+                  const trackersDetected = Boolean(result.details?.trackersDetected);
+
+                  let title = "";
+                  let description = "";
+                  let action = "";
+                  let extra = "";
+
+                  if (key === "privacyPolicy") {
+                    if (passed) {
+                      title = t("criteriaDetails.privacyPolicy.pass.title");
+                      description = t(
+                        "criteriaDetails.privacyPolicy.pass.description",
+                      );
+                    } else {
+                      title = t("criteriaDetails.privacyPolicy.fail.title");
+                      description = t(
+                        "criteriaDetails.privacyPolicy.fail.description",
+                      );
+                      action = t("criteriaDetails.privacyPolicy.fail.action");
+                    }
+                  }
+
+                  if (key === "https") {
+                    if (passed) {
+                      title = t("criteriaDetails.https.pass.title");
+                      description = t("criteriaDetails.https.pass.description");
+                    } else {
+                      title = t("criteriaDetails.https.fail.title");
+                      description = t("criteriaDetails.https.fail.description");
+                      action = t("criteriaDetails.https.fail.action");
+                    }
+                  }
+
+                  if (key === "cookieConsent") {
+                    if (passed) {
+                      title = t("criteriaDetails.cookieConsent.pass.title");
+                      if (!trackersDetected) {
+                        description = t(
+                          "criteriaDetails.cookieConsent.pass.noTrackersDescription",
+                        );
+                      } else {
+                        description = t(
+                          "criteriaDetails.cookieConsent.pass.withBannerDescription",
+                        );
+                      }
+                    } else {
+                      const trackersList = "Google Analytics, Facebook Pixel";
+                      title = t("criteriaDetails.cookieConsent.fail.title");
+                      description = t(
+                        "criteriaDetails.cookieConsent.fail.description",
+                      );
+                      action = t("criteriaDetails.cookieConsent.fail.action");
+                      extra = t("criteriaDetails.cookieConsent.fail.extra", {
+                        trackers: trackersList,
+                      });
+                    }
+                  }
+
+                  if (key === "responsiblePerson") {
+                    if (passed) {
+                      title = t("criteriaDetails.responsiblePerson.pass.title");
+                      description = t(
+                        "criteriaDetails.responsiblePerson.pass.description",
+                      );
+                    } else {
+                      title = t("criteriaDetails.responsiblePerson.fail.title");
+                      description = t(
+                        "criteriaDetails.responsiblePerson.fail.description",
+                      );
+                      action = t("criteriaDetails.responsiblePerson.fail.action");
+                    }
+                  }
+
+                  return (
+                    <div
+                      key={key}
+                      className={`flex items-start gap-4 rounded-lg border p-4 ${
+                        passed
+                          ? "border-green-200 bg-green-50"
+                          : "border-red-200 bg-red-50"
+                      }`}
+                    >
+                      <div
+                        className={`text-2xl ${
+                          passed ? "text-green-500" : "text-red-500"
+                        }`}
+                      >
+                        {passed ? "✅" : "❌"}
+                      </div>
+                      <div className="flex-1">
+                        <h3
+                          className={`font-semibold ${
+                            passed ? "text-green-700" : "text-red-700"
                           }`}
                         >
-                          <Icon
-                            className={`h-5 w-5 ${value ? "text-green-400" : "text-red-400"}`}
-                          />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-white">
-                              {t(`criteria.${key}`)}
-                            </p>
-                          </div>
-                          {value ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-400" />
-                          ) : (
-                            <XCircle className="h-5 w-5 text-red-400" />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+                          {title}
+                        </h3>
+                        <p
+                          className={`mt-1 text-sm ${
+                            passed ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {description}
+                        </p>
+                        {extra && (
+                          <p className="mt-1 text-xs text-red-600">{extra}</p>
+                        )}
+                        {action && (
+                          <button className="mt-2 text-sm text-red-600 underline">
+                            {action}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
               {/* Recommendations */}
               {recommendations.length > 0 && (
@@ -339,6 +385,39 @@ export function AuditSection() {
                     </ul>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* CTA After Results */}
+              {percentScore < 100 ? (
+                <div className="rounded-lg border border-border bg-slate-50 p-6">
+                  <h3 className="mb-4 font-bold text-slate-900">
+                    {ctaCopy.needsHelp}
+                  </h3>
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <Button asChild variant="outline" className="w-full">
+                      <a href={contactHref("scanOnly")}>{ctaCopy.report}</a>
+                    </Button>
+                    <div className="relative w-full">
+                      <div className="absolute -top-3 right-3">
+                        <Badge variant="success">{ctaCopy.recommended}</Badge>
+                      </div>
+                      <Button asChild className="w-full gradient-primary">
+                        <a href={contactHref("scanFix")}>{ctaCopy.fixAll}</a>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-border bg-slate-50 p-6">
+                  <h3 className="mb-4 font-bold text-slate-900">
+                    {ctaCopy.congrats}
+                  </h3>
+                  <Button asChild className="gradient-primary">
+                    <a href={contactHref("complianceManager")}>
+                      {ctaCopy.maintain}
+                    </a>
+                  </Button>
+                </div>
               )}
 
               {/* Action Buttons */}

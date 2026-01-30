@@ -29,6 +29,8 @@
     "platforms": "Wix, WordPress, Shopify, sites sur mesure",
     "delay": "2 à 5 jours ouvrables",
     "compliance_badge": "Conformité Loi 25 du Québec",
+    "new_badge": "🚀 Nouveauté 2026",
+    "secondary_cta": "Voir les forfaits",
     "supported_platforms": "✅ Plateformes supportées",
     "avg_delay_label": "⏱️ Délai moyen :",
     "stats": {
@@ -81,6 +83,66 @@
       "absent": "Absent"
     },
     "recommendations": "Recommandations",
+    "detailsTitle": "Résultats détaillés",
+    "results": {
+      "scoreLabel": "Votre score de conformité : {passed}/{total} ({percent}%)"
+    },
+    "resultsCta": {
+      "needsHelp": "Besoin d'aide pour corriger ces problèmes?",
+      "report": "Obtenir le rapport complet (199$)",
+      "fixAll": "Faire corriger tout ça (699$)",
+      "recommended": "Recommandé",
+      "congrats": "🎉 Félicitations! Votre site semble conforme.",
+      "maintain": "Maintenir la conformité (699$ + 79$/mois)"
+    },
+    "criteriaDetails": {
+      "privacyPolicy": {
+        "pass": {
+          "title": "Politique de confidentialité",
+          "description": "Une politique de confidentialité accessible a été trouvée sur votre site."
+        },
+        "fail": {
+          "title": "Politique de confidentialité manquante",
+          "description": "Aucune politique de confidentialité n'a été détectée. La Loi 25 exige une politique claire et accessible.",
+          "action": "Ajouter une politique de confidentialité"
+        }
+      },
+      "https": {
+        "pass": {
+          "title": "HTTPS activé",
+          "description": "Votre site utilise un certificat SSL valide pour sécuriser les données."
+        },
+        "fail": {
+          "title": "HTTPS non activé",
+          "description": "Votre site n'utilise pas HTTPS. Les données transmises ne sont pas chiffrées.",
+          "action": "Activer le certificat SSL"
+        }
+      },
+      "cookieConsent": {
+        "pass": {
+          "title": "Gestion des cookies conforme",
+          "noTrackersDescription": "Aucun tracker détecté sur votre site. Pas de bannière de consentement nécessaire.",
+          "withBannerDescription": "Trackers détectés avec bannière de consentement présente. Conforme à la Loi 25."
+        },
+        "fail": {
+          "title": "Bannière de consentement manquante",
+          "description": "Des trackers ont été détectés (Google Analytics, Meta Pixel) mais aucune bannière de consentement n'est présente. La Loi 25 exige le consentement explicite avant l'activation des cookies.",
+          "action": "Installer une bannière de consentement (CMP)",
+          "extra": "Trackers détectés : {trackers}"
+        }
+      },
+      "responsiblePerson": {
+        "pass": {
+          "title": "Personne responsable identifiée",
+          "description": "La personne responsable de la protection des données est identifiée sur votre site."
+        },
+        "fail": {
+          "title": "Personne responsable non listée",
+          "description": "La Loi 25 exige d'identifier publiquement le responsable de la protection des renseignements personnels (nom et coordonnées).",
+          "action": "Ajouter le responsable dans le footer ou page de contact"
+        }
+      }
+    },
     "recommendationMessages": {
       "privacyPolicy": "Ajoutez une politique de confidentialité accessible.",
       "https": "Activez HTTPS avec un certificat SSL valide.",
@@ -89,6 +151,41 @@
       "cookieConsent": "Assurez-vous d'obtenir le consentement avant de charger des traceurs/cookies.",
       "secureForms": "Assurez-vous que les formulaires recueillent le consentement.",
       "responsiblePerson": "Identifiez un responsable de la protection des renseignements personnels."
+    },
+    "postScan": {
+      "needsHelpTitle": "Besoin d'aide pour corriger ces problèmes?",
+      "option1": {
+        "title": "Option 1 - Rapport détaillé (199$)",
+        "items": [
+          "Analyse détaillée de chaque problème",
+          "Guide étape par étape pour corriger",
+          "Screenshots de ce qui ne va pas",
+          "Recommandations prioritaires"
+        ],
+        "cta": "Obtenir le rapport →"
+      },
+      "option2": {
+        "title": "Option 2 - On s'occupe de tout (699$)",
+        "badge": "Recommandé",
+        "items": [
+          "Corrections complètes en 2-5 jours",
+          "Certificat de conformité",
+          "Support 30 jours",
+          "Garantie de conformité"
+        ],
+        "cta": "Corriger mon site →"
+      },
+      "congratsTitle": "Félicitations! Votre site semble conforme. 🎉",
+      "monitoring": {
+        "title": "Gestionnaire de Conformité (699$ + 79$/mois)",
+        "items": [
+          "Scans automatiques mensuels",
+          "Alertes si problèmes détectés",
+          "Rapport annuel pour vos dossiers",
+          "Support prioritaire"
+        ],
+        "cta": "Protéger ma conformité →"
+      }
     },
     "cta": {
       "fullAudit": "Demander un devis",
@@ -145,28 +242,26 @@
         "description": "Validation du certificat SSL pour la sécurité des données"
       },
       {
-        "title": "Cookies & Traceurs",
-        "description": "Détection des scripts de suivi (Analytics, Meta Pixel, GTM, etc.)"
+        "title": "Consentement aux cookies",
+        "description": "Vérification de la présence d'un mécanisme de consentement"
       },
       {
-        "title": "Bannière de Consentement",
-        "description": "Vérification du système de gestion des cookies (CMP)"
-      },
-      {
-        "title": "Formulaires Conformes",
-        "description": "Analyse des formulaires de contact et newsletter"
+        "title": "Responsable de la protection des renseignements personnels",
+        "description": "Validation de l'identification du responsable sur le site"
       }
     ],
     "limitations": {
       "title": "Limitations du Scan Gratuit",
       "items": [
-        "Analyse basique (5 critères clés)",
+        "Analyse basique (4 critères clés)",
         "Pas de rapport détaillé",
         "Pas de corrections incluses",
         "Pas de suivi dans le temps"
       ]
     },
-    "cta": "Obtenez une mise en conformité complète avec nos forfaits"
+    "cta": "Obtenez une mise en conformité complète avec nos forfaits",
+    "ctaDescription": "Notre audit complet analyse 12 critères de conformité avec rapport détaillé, screenshots et plan d'action personnalisé.",
+    "ctaButton": "Voir les forfaits"
   },
   "pricing": {
     "title": "Nos Forfaits",
@@ -174,6 +269,7 @@
     "platforms": "Plateformes supportées",
     "platformsList": "Wix, WordPress, Shopify, sites sur mesure",
     "delay": "Délai moyen : 2 à 5 jours",
+    "recommendedBadge": "Recommandé",
     "tiers": {
       "scanOnly": {
         "name": "Scan Complet",
@@ -245,31 +341,31 @@
     "items": [
       {
         "question": "Qu'est-ce que la Loi 25?",
-        "answer": "La Loi 25 est une loi québécoise qui modernise la protection des renseignements personnels. Elle impose des obligations strictes aux entreprises concernant la collecte, l'utilisation et la protection des données personnelles."
+        "answer": "La Loi 25 (Loi modernisant des dispositions législatives en matière de protection des renseignements personnels) est une réforme québécoise entrée en vigueur en septembre 2023. Elle impose aux entreprises de protéger les données personnelles de leurs clients avec des exigences similaires au RGPD européen. Toute entreprise qui collecte des données de résidents du Québec doit s'y conformer, sous peine d'amendes pouvant atteindre 25 millions $ ou 4% du chiffre d'affaires mondial."
       },
       {
         "question": "C'est quoi le Monitoring?",
-        "answer": "Un contrôle automatisé qui détecte les changements (nouveaux scripts, nouveaux traceurs, modifications de formulaires) et vous alerte par courriel."
+        "answer": "Le forfait Monitoring (Gestionnaire de Conformité) inclut des scans automatisés mensuels de votre site web. Si de nouveaux problèmes de conformité apparaissent (par exemple, suite à une mise à jour de plugin ou l'ajout de nouveaux trackers), vous recevez une alerte immédiate par courriel. Cela vous permet de rester conforme en continu sans avoir à penser à re-scanner votre site manuellement."
       },
       {
-        "question": "Pourquoi scanner chaque semaine?",
-        "answer": "Parce qu'un site change souvent sans qu'on le remarque (plugins, apps, pixels, GTM, mises à jour). Le monitoring évite les régressions."
+        "question": "Pourquoi scanner régulièrement?",
+        "answer": "Votre site web évolue constamment : vous ajoutez des plugins, mettez à jour votre thème, installez de nouveaux outils marketing (Google Analytics, Meta Pixel, etc.). Chaque changement peut affecter votre conformité. Un scan régulier détecte automatiquement ces nouveaux problèmes avant qu'ils ne deviennent des risques légaux."
       },
       {
         "question": "Est-ce compatible Wix / WordPress / Shopify?",
-        "answer": "Oui. On installe via l'admin (snippet/app/plugin selon la plateforme)."
+        "answer": "Oui! Notre service fonctionne avec toutes les plateformes web populaires : Wix, WordPress, Shopify, Squarespace, et même les sites développés sur mesure. Pour le forfait \"Scan Complet + Correction\", nous corrigeons directement les problèmes en installant les bons plugins, en configurant les bannières de cookies, et en ajoutant les politiques manquantes, quelle que soit votre plateforme."
       },
       {
         "question": "Combien de temps ça prend?",
-        "answer": "Généralement 2 à 5 jours ouvrables après réception des accès (et selon la complexité)."
+        "answer": "- Scan Complet (199$) : Rapport livré en 24-48h\n- Scan + Correction (699$) : Votre site devient conforme en 2 à 5 jours ouvrables\n- Gestionnaire de Conformité (699$ + 79$/mois) : Mise en conformité initiale en 2-5 jours, puis scans automatiques chaque mois"
       },
       {
         "question": "Qu'est-ce que je dois fournir?",
-        "answer": "Accès admin au site + accès à vos outils marketing (si applicable : GTM, pixels, etc.)."
+        "answer": "Très simple! Vous devez nous fournir :\n1. L'URL de votre site web\n2. Accès administrateur à votre plateforme (WordPress, Shopify, etc.) - UNIQUEMENT pour le forfait \"Scan + Correction\"\n3. Pour le scan simple (199$), aucun accès n'est nécessaire\n\nTous vos accès sont sécurisés et supprimés immédiatement après la correction."
       },
       {
         "question": "Quelles sont les pénalités en cas de non-conformité?",
-        "answer": "Les pénalités peuvent atteindre 25 millions de dollars ou 4% du chiffre d'affaires mondial. La CAI peut également ordonner des mesures correctives."
+        "answer": "La Commission d'accès à l'information (CAI) peut imposer :\n- Sanctions administratives : Jusqu'à 10M$ ou 2% du chiffre d'affaires mondial\n- Sanctions pénales : Jusqu'à 25M$ ou 4% du chiffre d'affaires mondial (pour les violations graves)\n- Droit d'action privé : Les individus peuvent réclamer au moins 1 000$ par personne\n\nLa CAI a d'abord une approche éducative, mais les sanctions sont réelles pour les manquements graves ou répétés."
       }
     ]
   },
@@ -285,12 +381,21 @@
       "message": "Message (optionnel)",
       "submit": "Envoyer ma demande",
       "selectType": "Sélectionnez un forfait",
+      "placeholders": {
+        "name": "Jean Tremblay",
+        "email": "jean@entreprise.ca",
+        "phone": "514-555-1234",
+        "domain": "monentreprise.ca",
+        "message": "Décrivez vos besoins..."
+      },
       "options": {
         "scanOnly": "Scan Complet - 199$",
         "scanFix": "Scan Complet + Correction - 699$",
         "complianceManager": "Gestionnaire de Conformité - 699$ + 79$/mois"
       }
     },
+    "successTitle": "Message envoyé!",
+    "sendAnother": "Envoyer un autre message",
     "success": "Merci! Nous vous recontacterons dans les 24 heures ouvrables.",
     "error": "Une erreur est survenue. Veuillez réessayer."
   },
@@ -301,6 +406,7 @@
     "cookiePolicy": "Politique des cookies",
     "dataRequest": "Demande de données",
     "compliance": "Conformité",
+    "auditHeatmap": "Audit et heatmap",
     "loi25": {
       "title": "Loi 25",
       "description": "Registre et politiques à jour"
@@ -313,6 +419,7 @@
       "title": "Consentement",
       "description": "Gestion dynamique des préférences"
     },
+    "preferencesNote": "Mettez à jour vos préférences de consentement quand vous souhaitez.",
     "preferencesButton": "Paramètres des cookies",
     "copyright": "© 2026 Solutions Impact Web Inc. Tous droits réservés.",
     "bottomLinks": {
@@ -330,6 +437,18 @@
     "description": "Ce site utilise des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos préférences.",
     "accept": "Tout accepter",
     "reject": "Tout refuser",
-    "customize": "Personnaliser"
+    "customize": "Personnaliser",
+    "settingsTitle": "Paramètres des cookies",
+    "necessaryTitle": "Cookies strictement nécessaires",
+    "necessaryDescription": "Essentiels au fonctionnement du site",
+    "analyticsTitle": "Cookies analytiques",
+    "analyticsDescription": "Nous aident à comprendre l'utilisation du site",
+    "marketingTitle": "Cookies marketing",
+    "marketingDescription": "Utilisés pour la publicité ciblée",
+    "savePreferences": "Enregistrer mes préférences",
+    "learnMorePrefix": "En savoir plus dans notre",
+    "learnMoreAnd": "et",
+    "cookiePolicyLabel": "politique des cookies",
+    "privacyPolicyLabel": "politique de confidentialité"
   }
 }

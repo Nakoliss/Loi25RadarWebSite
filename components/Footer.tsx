@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Shield, Mail, Phone, MapPin, ExternalLink } from "lucide-react";
+import { Shield, Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("footer");
@@ -31,9 +31,7 @@ export function Footer() {
             <p className="mt-2 text-sm text-muted-foreground">
               {tc("division")}
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              {t("description")}
-            </p>
+            <p className="mt-4 text-sm text-muted-foreground">{t("description")}</p>
 
             <div className="mt-6 space-y-2">
               <a
@@ -73,7 +71,7 @@ export function Footer() {
                   href="/privacy"
                   className="text-sm text-white hover:text-primary"
                 >
-                  Politique de confidentialité
+                  {t("bottomLinks.privacy")}
                 </Link>
               </li>
               <li>
@@ -97,7 +95,7 @@ export function Footer() {
                   href="/#audit"
                   className="text-sm text-white hover:text-primary"
                 >
-                  Audit et heatmap
+                  {t("auditHeatmap")}
                 </Link>
               </li>
             </ul>
@@ -144,8 +142,7 @@ export function Footer() {
               </div>
 
               <p className="mt-4 text-sm text-muted-foreground">
-                Mettez à jour vos préférences de consentement quand vous
-                souhaitez.
+                {t("preferencesNote")}
               </p>
               <button className="mt-2 rounded-full border border-primary/50 px-4 py-2 text-sm text-primary transition-all hover:bg-primary/10">
                 {t("preferencesButton")}

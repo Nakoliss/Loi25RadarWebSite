@@ -56,12 +56,68 @@ function formatEmailContent(formData: ContactFormEmail): {
   html: string;
   text: string;
 } {
-  const language = formData.locale || "fr";
+  const language =
+    formData.locale && formData.locale.toLowerCase().startsWith("en")
+      ? "en"
+      : "fr";
 
-  // Subject line
-  const subject = `📢 Nouveau Lead: ${formData.name} - ${formData.auditType || "Audit"}`;
+  const copy =
+    language === "en"
+      ? {
+          subjectPrefix: "New Lead",
+          defaultAudit: "Audit",
+          headerTitle: "Loi 25 Radar",
+          headerSubtitle: "New scan / contact request",
+          labels: {
+            name: "Name",
+            email: "Email",
+            phone: "Phone",
+            website: "Website",
+            requestType: "Request type",
+            language: "Language",
+            receivedAt: "Received on",
+            message: "Message",
+            notProvided: "Not provided",
+            notSpecified: "Not specified",
+          },
+          languageLabel: "English",
+          footer: "Sent via the Loi 25 Radar form",
+          plainHeader: "Loi 25 Radar - New Lead",
+        }
+      : {
+          subjectPrefix: "Nouveau Lead",
+          defaultAudit: "Audit",
+          headerTitle: "Loi 25 Radar",
+          headerSubtitle: "Nouvelle demande de scan / contact",
+          labels: {
+            name: "Nom",
+            email: "Email",
+            phone: "Telephone",
+            website: "Site Web",
+            requestType: "Type de demande",
+            language: "Langue",
+            receivedAt: "Recu le",
+            message: "Message",
+            notProvided: "Non fourni",
+            notSpecified: "Non specifie",
+          },
+          languageLabel: "Francais",
+          footer: "Envoye via le formulaire Loi 25 Radar",
+          plainHeader: "Loi 25 Radar - Nouveau Lead",
+        };
 
-  // HTML content
+  const subject = `${copy.subjectPrefix}: ${formData.name} - ${
+    formData.auditType || copy.defaultAudit
+  }`;
+
+  const safeAuditType = formData.auditType || copy.labels.notSpecified;
+  const safePhone = formData.phone || copy.labels.notProvided;
+  const safeDomain = formData.domain || copy.labels.notProvided;
+  const safeMessage = formData.message || "";
+  const domainHtml = formData.domain
+    ? `<a href="${formData.domain}">${formData.domain}</a>`
+    : safeDomain;
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -80,40 +136,40 @@ function formatEmailContent(formData: ContactFormEmail): {
     </head>
     <body>
       <div class="header">
-        <h1>Loi 25 Radar</h1>
-        <p>Nouvelle demande de scan / contact</p>
+        <h1>${copy.headerTitle}</h1>
+        <p>${copy.headerSubtitle}</p>
       </div>
       
       <div class="content">
         <div class="field">
-          <strong>Nom:</strong> ${formData.name}
+          <strong>${copy.labels.name}:</strong> ${formData.name}
         </div>
         
         <div class="field">
-          <strong>Email:</strong> <a href="mailto:${formData.email}">${formData.email}</a>
+          <strong>${copy.labels.email}:</strong> <a href="mailto:${formData.email}">${formData.email}</a>
         </div>
         
-        ${formData.phone ? `<div class="field"><strong>Téléphone:</strong> ${formData.phone}</div>` : ""}
-        ${formData.domain ? `<div class="field"><strong>Site Web:</strong> <a href="${formData.domain}">${formData.domain}</a></div>` : ""}
+        <div class="field"><strong>${copy.labels.phone}:</strong> ${safePhone}</div>
+        <div class="field"><strong>${copy.labels.website}:</strong> ${domainHtml}</div>
         
         <div class="field">
-          <strong>Type de demande:</strong> <span class="badge">${formData.auditType || "Non spécifié"}</span>
-        </div>
-        
-        <div class="field">
-          <strong>Langue:</strong> ${language === "fr" ? "🇫🇷 Français" : "🇺🇸 Anglais"}
+          <strong>${copy.labels.requestType}:</strong> <span class="badge">${safeAuditType}</span>
         </div>
         
         <div class="field">
-          <strong>Reçu le:</strong> ${new Date(formData.timestamp).toLocaleString()}
+          <strong>${copy.labels.language}:</strong> ${copy.languageLabel}
+        </div>
+        
+        <div class="field">
+          <strong>${copy.labels.receivedAt}:</strong> ${new Date(formData.timestamp).toLocaleString()}
         </div>
         
         ${
-          formData.message
+          safeMessage
             ? `
         <div class="field">
-          <strong>Message:</strong>
-          <div class="message-box">${formData.message.replace(/\n/g, "<br>")}</div>
+          <strong>${copy.labels.message}:</strong>
+          <div class="message-box">${safeMessage.replace(/\n/g, "<br>")}</div>
         </div>
         `
             : ""
@@ -121,26 +177,25 @@ function formatEmailContent(formData: ContactFormEmail): {
       </div>
       
       <div class="footer">
-        <p>Envoyé via le formulaire Loi 25 Radar</p>
+        <p>${copy.footer}</p>
       </div>
     </body>
     </html>
   `;
 
-  // Plain text version
   const text = `
-Loi 25 Radar — Nouveau Lead
+${copy.plainHeader}
 
-Nom: ${formData.name}
-Email: ${formData.email}
-Téléphone: ${formData.phone || "Non fourni"}
-Site Web: ${formData.domain || "Non fourni"}
-Forfait: ${formData.auditType || "Non spécifié"}
+${copy.labels.name}: ${formData.name}
+${copy.labels.email}: ${formData.email}
+${copy.labels.phone}: ${safePhone}
+${copy.labels.website}: ${safeDomain}
+${copy.labels.requestType}: ${safeAuditType}
 
-Message:
-${formData.message || "Aucun message"}
+${copy.labels.message}:
+${formData.message || copy.labels.notProvided}
 
-Reçu le: ${new Date(formData.timestamp).toLocaleString()}
+${copy.labels.receivedAt}: ${new Date(formData.timestamp).toLocaleString()}
   `.trim();
 
   return { subject, html, text };
@@ -186,10 +241,18 @@ export async function sendContactEmail(
       success: true,
       messageId: info.messageId,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to send email:", error);
 
-    if (error?.responseCode === 535) {
+    const responseCode =
+      typeof error === "object" &&
+      error !== null &&
+      "responseCode" in error &&
+      typeof (error as { responseCode?: unknown }).responseCode === "number"
+        ? (error as { responseCode?: number }).responseCode
+        : undefined;
+
+    if (responseCode === 535) {
       console.error(
         "❌ AUTHENTICATION ERROR: It looks like your SMTP password is incorrect.",
       );

@@ -19,29 +19,54 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata: Metadata = {
-  title: "Loi 25 Radar | Solutions Impact Web - Conformité Loi 25",
-  description:
-    "Rendez votre site conforme à la Loi 25 sans casse-tête. Scan gratuit, mise en conformité et monitoring. Wix, WordPress, Shopify.",
-  keywords: [
-    "Loi 25",
-    "conformité",
-    "Québec",
-    "cookies",
-    "RGPD",
-    "CAI",
-    "protection données",
-  ],
-  authors: [{ name: "Solutions Impact Web" }],
-  openGraph: {
-    title: "Loi 25 Radar - Conformité Loi 25 du Québec",
-    description:
-      "Scan gratuit en 30 secondes. Mise en conformité à partir de 499$.",
-    siteName: "Loi 25 Radar",
-    locale: "fr_CA",
-    type: "website",
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string } | Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isEn = locale === "en";
+
+  return {
+    title: isEn
+      ? "Loi 25 Radar | Solutions Impact Web - Law 25 Compliance"
+      : "Loi 25 Radar | Solutions Impact Web - Conformite Loi 25",
+    description: isEn
+      ? "Make your website Law 25 compliant, hassle-free. Free scan, compliance and monitoring. Wix, WordPress, Shopify."
+      : "Rendez votre site conforme a la Loi 25 sans casse-tete. Scan gratuit, mise en conformite et monitoring. Wix, WordPress, Shopify.",
+    keywords: isEn
+      ? [
+          "Law 25",
+          "compliance",
+          "Quebec",
+          "cookies",
+          "GDPR",
+          "CAI",
+          "data protection",
+        ]
+      : [
+          "Loi 25",
+          "conformite",
+          "Quebec",
+          "cookies",
+          "RGPD",
+          "CAI",
+          "protection donnees",
+        ],
+    authors: [{ name: "Solutions Impact Web" }],
+    openGraph: {
+      title: isEn
+        ? "Loi 25 Radar - Law 25 Compliance"
+        : "Loi 25 Radar - Conformite Loi 25 du Quebec",
+      description: isEn
+        ? "Free scan in 30 seconds. Compliance starting at $499."
+        : "Scan gratuit en 30 secondes. Mise en conformite a partir de 499$.",
+      siteName: "Loi 25 Radar",
+      locale: isEn ? "en_CA" : "fr_CA",
+      type: "website",
+    },
+  };
+}
 
 export default async function LocaleLayout({
   children,

@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "@/i18n/navigation";
 import { Shield, Users, Target, Award, CheckCircle2 } from "lucide-react";
 
 export default async function AboutPage({
@@ -169,18 +170,18 @@ function AboutContent() {
               en conformité complète.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <a
+              <Link
                 href="/#audit"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-primary transition-all hover:bg-white/90"
               >
                 Scan gratuit
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#contact"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3 font-semibold text-white transition-all hover:bg-white/20"
               >
                 Demander un devis
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>

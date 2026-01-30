@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { Cookie, X, Settings } from "lucide-react";
 
 type ConsentSettings = {
@@ -115,7 +116,7 @@ export function CookieBanner() {
             <>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-white">
-                  Paramètres des cookies
+                  {t("settingsTitle")}
                 </h3>
                 <button
                   onClick={() => setShowSettings(false)}
@@ -129,10 +130,10 @@ export function CookieBanner() {
                 <div className="flex items-center justify-between rounded-lg border border-border p-4">
                   <div>
                     <p className="font-medium text-white">
-                      Cookies strictement nécessaires
+                      {t("necessaryTitle")}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Essentiels au fonctionnement du site
+                      {t("necessaryDescription")}
                     </p>
                   </div>
                   <div className="flex h-6 w-11 cursor-not-allowed items-center rounded-full bg-primary p-1">
@@ -143,10 +144,10 @@ export function CookieBanner() {
                 <div className="flex items-center justify-between rounded-lg border border-border p-4">
                   <div>
                     <p className="font-medium text-white">
-                      Cookies analytiques
+                      {t("analyticsTitle")}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Nous aident à comprendre l&apos;utilisation du site
+                      {t("analyticsDescription")}
                     </p>
                   </div>
                   <button
@@ -167,9 +168,11 @@ export function CookieBanner() {
                 {/* Marketing */}
                 <div className="flex items-center justify-between rounded-lg border border-border p-4">
                   <div>
-                    <p className="font-medium text-white">Cookies marketing</p>
+                    <p className="font-medium text-white">
+                      {t("marketingTitle")}
+                    </p>
                     <p className="text-sm text-muted-foreground">
-                      Utilisés pour la publicité ciblée
+                      {t("marketingDescription")}
                     </p>
                   </div>
                   <button
@@ -193,20 +196,20 @@ export function CookieBanner() {
                   onClick={() => saveConsent("custom")}
                   className="flex-1"
                 >
-                  Enregistrer mes préférences
+                  {t("savePreferences")}
                 </Button>
               </div>
             </>
           )}
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            En savoir plus dans notre{" "}
-            <a href="/cookies" className="text-primary hover:underline">
-              politique des cookies
-            </a>{" "}
-            et{" "}
-            <a href="/privacy" className="text-primary hover:underline">
-              politique de confidentialité
-            </a>
+            {t("learnMorePrefix")} {" "}
+            <Link href="/cookies" className="text-primary hover:underline">
+              {t("cookiePolicyLabel")}
+            </Link>{" "}
+            {t("learnMoreAnd")}{" "}
+            <Link href="/privacy" className="text-primary hover:underline">
+              {t("privacyPolicyLabel")}
+            </Link>
           </p>
         </div>
       </motion.div>

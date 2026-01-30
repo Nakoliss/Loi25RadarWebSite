@@ -8,8 +8,7 @@ import {
   FileText,
   Lock,
   Cookie,
-  Shield,
-  FormInput,
+  UserCheck,
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
@@ -23,7 +22,7 @@ export function FeaturesSection() {
   }>;
   const limitations = t.raw("limitations.items") as string[];
 
-  const icons = [FileText, Lock, Cookie, Shield, FormInput];
+  const icons = [FileText, Lock, Cookie, UserCheck];
 
   return (
     <section className="py-20 sm:py-32">
@@ -110,11 +109,7 @@ export function FeaturesSection() {
             <Card className="w-full gradient-primary">
               <CardContent className="p-6 sm:p-8">
                 <h3 className="text-2xl font-bold text-white">{t("cta")}</h3>
-                <p className="mt-4 text-white/80">
-                  Notre audit complet analyse 12 critères de conformité avec
-                  rapport détaillé, screenshots et plan d&apos;action
-                  personnalisé.
-                </p>
+                <p className="mt-4 text-white/80">{t("ctaDescription")}</p>
                 <Button
                   variant="outline"
                   size="lg"
@@ -122,7 +117,7 @@ export function FeaturesSection() {
                   asChild
                 >
                   <a href="#pricing">
-                    Voir les forfaits
+                    {t("ctaButton")}
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>

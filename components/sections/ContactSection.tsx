@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,6 +26,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export function ContactSection() {
   const t = useTranslations("contact");
+  const locale = useLocale();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +35,8 @@ export function ContactSection() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -47,7 +50,7 @@ export function ContactSection() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, locale }),
       });
 
       if (!response.ok) {
@@ -63,11 +66,58 @@ export function ContactSection() {
     }
   };
 
-  const auditTypes = [
-    t("form.options.scanOnly"),
-    t("form.options.scanFix"),
-    t("form.options.complianceManager"),
-  ];
+  const auditTypeLabels = useMemo(
+    () => ({
+      scanOnly: t("form.options.scanOnly"),
+      scanFix: t("form.options.scanFix"),
+      complianceManager: t("form.options.complianceManager"),
+    }),
+    [t],
+  );
+  const auditTypes = useMemo(
+    () => Object.values(auditTypeLabels),
+    [auditTypeLabels],
+  );
+
+  useEffect(() => {
+    const applyPrefill = () => {
+      if (typeof window === "undefined") return;
+
+      const searchParams = new URLSearchParams(window.location.search);
+      let prefill =
+        searchParams.get("auditType") || searchParams.get("plan") || "";
+
+      if (!prefill && window.location.hash) {
+        const queryIndex = window.location.hash.indexOf("?");
+        if (queryIndex !== -1) {
+          const hashQuery = window.location.hash.slice(queryIndex + 1);
+          const hashParams = new URLSearchParams(hashQuery);
+          prefill =
+            hashParams.get("auditType") || hashParams.get("plan") || "";
+        }
+      }
+
+      if (!prefill) return;
+      if (getValues("auditType")) return;
+
+      const normalized = prefill.trim();
+      const label =
+        auditTypeLabels[normalized as keyof typeof auditTypeLabels] ??
+        auditTypes.find((type) => type === normalized);
+
+      if (label) {
+        setValue("auditType", label);
+      }
+    };
+
+    applyPrefill();
+    window.addEventListener("hashchange", applyPrefill);
+    window.addEventListener("popstate", applyPrefill);
+    return () => {
+      window.removeEventListener("hashchange", applyPrefill);
+      window.removeEventListener("popstate", applyPrefill);
+    };
+  }, [auditTypes, auditTypeLabels, getValues, setValue]);
 
   return (
     <section id="contact" className="py-20 sm:py-32 bg-card/50">
@@ -107,7 +157,7 @@ export function ContactSection() {
                     <CheckCircle2 className="h-8 w-8 text-green-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-white">
-                    Message envoyé!
+                    {t("successTitle")}
                   </h3>
                   <p className="mt-2 text-muted-foreground">{t("success")}</p>
                   <Button
@@ -115,7 +165,7 @@ export function ContactSection() {
                     className="mt-6"
                     onClick={() => setIsSuccess(false)}
                   >
-                    Envoyer un autre message
+                    {t("sendAnother")}
                   </Button>
                 </motion.div>
               ) : (
@@ -128,7 +178,7 @@ export function ContactSection() {
                       </label>
                       <Input
                         {...register("name")}
-                        placeholder="Jean Tremblay"
+                        placeholder={t("form.placeholders.name")}
                         className={errors.name ? "border-red-500" : ""}
                       />
                       {errors.name && (
@@ -146,7 +196,7 @@ export function ContactSection() {
                       <Input
                         {...register("email")}
                         type="email"
-                        placeholder="jean@entreprise.ca"
+                        placeholder={t("form.placeholders.email")}
                         className={errors.email ? "border-red-500" : ""}
                       />
                       {errors.email && (
@@ -166,7 +216,7 @@ export function ContactSection() {
                       <Input
                         {...register("phone")}
                         type="tel"
-                        placeholder="514-555-1234"
+                        placeholder={t("form.placeholders.phone")}
                       />
                     </div>
 
@@ -177,7 +227,7 @@ export function ContactSection() {
                       </label>
                       <Input
                         {...register("domain")}
-                        placeholder="monentreprise.ca"
+                        placeholder={t("form.placeholders.domain")}
                       />
                     </div>
                   </div>
@@ -213,7 +263,7 @@ export function ContactSection() {
                     </label>
                     <Textarea
                       {...register("message")}
-                      placeholder="Décrivez vos besoins..."
+                      placeholder={t("form.placeholders.message")}
                       rows={4}
                     />
                   </div>

@@ -9,6 +9,7 @@ const contactSchema = z.object({
   domain: z.string().optional(),
   auditType: z.string().optional(),
   message: z.string().max(500).optional(),
+  locale: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,7 +22,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
     }
 
-    const { name, email, phone, domain, auditType, message } = parsed.data;
+    const { name, email, phone, domain, auditType, message, locale } =
+      parsed.data;
 
     // Send email using our new generic service
     const emailResult = await sendContactEmail({
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
       domain,
       auditType,
       message,
-      locale: "fr", // Default to FR for now, could be passed from client
+      locale: locale || "fr",
       timestamp: new Date().toISOString(),
     });
 
