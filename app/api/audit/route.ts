@@ -5,77 +5,203 @@ const auditSchema = z.object({
   url: z.string().url(),
 });
 
-// Simulated scanner - returns mock results for MVP
-// In production, this would use Playwright to actually scan the site
-function simulateScan(url: string) {
-  // Simulate scanning delay
-  const scanTime = Math.floor(Math.random() * 5) + 2; // 2-7 seconds
+const MAX_HTML_BYTES = 1_000_000;
 
-  // Parse the domain for consistent results based on URL
-  const domain = new URL(url).hostname;
-  const hash = domain
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const TRACKER_SIGNATURES = [
+  "google-analytics.com",
+  "googletagmanager.com",
+  "gtag/js",
+  "connect.facebook.net",
+  "facebook.com/tr",
+  "facebook.net/tr",
+];
 
-  // Generate deterministic but varied results based on domain
+const PRIVACY_POLICY_PATTERNS = [
+  /politique de confidentialit/i,
+  /privacy policy/i,
+  /politique de vie priv/i,
+];
+
+const PRIVACY_POLICY_PATHS = [
+  "/privacy",
+  "/confidentialite",
+  "/confidentialit",
+  "/politique",
+  "/privacy-policy",
+];
+
+const CONSENT_PATTERNS = [
+  /cookie/i,
+  /consent/i,
+  /banni[eè]re/i,
+  /gestion du consentement/i,
+  /loi 25/i,
+];
+
+const RESPONSIBLE_PERSON_PATTERNS = [
+  /responsable/i,
+  /protection des renseignements personnels/i,
+  /privacy officer/i,
+  /\bdpo\b/i,
+  /responsable de la protection/i,
+];
+
+function containsAnyPattern(content: string, patterns: RegExp[]) {
+  return patterns.some((pattern) => pattern.test(content));
+}
+
+function hasPrivacyPolicyLink(html: string) {
+  if (containsAnyPattern(html, PRIVACY_POLICY_PATTERNS)) {
+    return true;
+  }
+
+  const linkRegex = /href\s*=\s*["']([^"']+)["']/gi;
+  let match = linkRegex.exec(html);
+  while (match) {
+    const href = match[1].toLowerCase();
+    if (PRIVACY_POLICY_PATHS.some((path) => href.includes(path))) {
+      return true;
+    }
+    match = linkRegex.exec(html);
+  }
+
+  return false;
+}
+
+function hasConsentBanner(html: string) {
+  return containsAnyPattern(html, CONSENT_PATTERNS);
+}
+
+function hasTrackers(html: string) {
+  const lower = html.toLowerCase();
+  return TRACKER_SIGNATURES.some((signature) => lower.includes(signature));
+}
+
+function hasResponsiblePerson(html: string) {
+  return containsAnyPattern(html, RESPONSIBLE_PERSON_PATTERNS);
+}
+
+function isPrivateIp(ip: string) {
+  if (ip === "::1" || ip === "127.0.0.1") return true;
+  if (ip.startsWith("10.")) return true;
+  if (ip.startsWith("192.168.")) return true;
+  if (ip.startsWith("172.")) {
+    const octet = Number(ip.split(".")[1]);
+    return octet >= 16 && octet <= 31;
+  }
+  if (ip.startsWith("169.254.")) return true;
+  if (ip.startsWith("fc") || ip.startsWith("fd")) return true;
+  return false;
+}
+
+async function validatePublicHostname(url: URL) {
+  const response = await fetch(
+    `https://dns.google/resolve?name=${encodeURIComponent(url.hostname)}`,
+    { headers: { Accept: "application/json" } },
+  );
+  if (!response.ok) {
+    throw new Error("DNS lookup failed");
+  }
+  const data = (await response.json()) as {
+    Answer?: Array<{ type: number; data: string }>;
+  };
+  const answers = data.Answer ?? [];
+  const ipv4s = answers.filter((record) => record.type === 1);
+  const ipv6s = answers.filter((record) => record.type === 28);
+  const hasBlocked = [...ipv4s, ...ipv6s].some((record) =>
+    isPrivateIp(record.data),
+  );
+  if (hasBlocked || answers.length === 0) {
+    throw new Error("Blocked host");
+  }
+}
+
+function normalizeUrl(input: string) {
+  const url = new URL(input);
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Unsupported protocol");
+  }
+  return url;
+}
+
+async function fetchWithTimeout(url: string, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      redirect: "follow",
+      signal: controller.signal,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (compatible; Loi25Scanner/1.0; +https://loi25.com)",
+      },
+    });
+    return response;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function readHtmlBody(response: Response) {
+  const reader = response.body?.getReader();
+  if (!reader) {
+    return "";
+  }
+
+  let received = 0;
+  const chunks: Uint8Array[] = [];
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) {
+      received += value.length;
+      if (received > MAX_HTML_BYTES) {
+        throw new Error("Response too large");
+      }
+      chunks.push(value);
+    }
+  }
+
+  const decoder = new TextDecoder("utf-8");
+  return decoder.decode(Buffer.concat(chunks));
+}
+
+async function runBasicScan(url: string) {
+  const startTime = Date.now();
+  const response = await fetchWithTimeout(url, 25000);
+  const contentType = response.headers.get("content-type") ?? "";
+  const isHtml = contentType.includes("text/html");
+  if (!isHtml) {
+    throw new Error("Unsupported content type");
+  }
+  const html = await readHtmlBody(response);
+  const finalUrl = response.url || url;
+
   const results = {
-    privacyPolicy: hash % 3 !== 0, // 66% chance detected
-    https: url.startsWith("https://"),
-    trackers: hash % 2 === 0, // 50% chance detected (this is a "warning" - trackers found)
-    consentBanner: hash % 4 !== 0, // 75% chance present
-    secureForms: hash % 5 !== 0, // 80% chance detected
+    privacyPolicy: hasPrivacyPolicyLink(html),
+    https: new URL(finalUrl).protocol === "https:",
+    consentBanner: hasConsentBanner(html),
+    trackers: hasTrackers(html),
+    responsiblePerson: hasResponsiblePerson(html),
   };
 
-  // Calculate score: each criterion is worth 20 points
-  // For trackers, having them detected without consent is bad
-  let score = 0;
-  if (results.privacyPolicy) score += 20;
-  if (results.https) score += 20;
-  if (!results.trackers || results.consentBanner) score += 20; // Good if no trackers OR has consent
-  if (results.consentBanner) score += 20;
-  if (results.secureForms) score += 20;
+  const score = Object.values(results).filter(Boolean).length;
+  const total = Object.keys(results).length;
 
-  // Determine risk level
-  let riskLevel: "critical" | "high" | "medium" | "low";
-  if (score < 40) riskLevel = "critical";
-  else if (score < 60) riskLevel = "high";
-  else if (score < 80) riskLevel = "medium";
-  else riskLevel = "low";
+  const missing = Object.entries(results)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
 
-  // Generate recommendations based on results
-  const recommendations: string[] = [];
-  if (!results.privacyPolicy) {
-    recommendations.push(
-      "Ajoutez une politique de confidentialité accessible sur votre site.",
-    );
-  }
-  if (!results.https) {
-    recommendations.push(
-      "Activez HTTPS avec un certificat SSL valide pour sécuriser les données.",
-    );
-  }
-  if (results.trackers && !results.consentBanner) {
-    recommendations.push(
-      "Implémentez une bannière de consentement pour vos cookies et trackers.",
-    );
-  }
-  if (!results.consentBanner) {
-    recommendations.push(
-      "Ajoutez un système de gestion du consentement aux cookies.",
-    );
-  }
-  if (!results.secureForms) {
-    recommendations.push(
-      "Assurez-vous que vos formulaires collectent le consentement approprié.",
-    );
-  }
+  const scanTime = Math.max(1, Math.round((Date.now() - startTime) / 1000));
 
   return {
     score,
-    riskLevel,
+    total,
     scanTime,
     results,
-    recommendations: recommendations.slice(0, 3), // Max 3 recommendations
+    missing,
   };
 }
 
@@ -92,13 +218,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Simulate processing delay (1-3 seconds)
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.random() * 2000 + 1000),
-    );
-
-    // Run simulated scan
-    const result = simulateScan(parsed.data.url);
+    const normalized = normalizeUrl(parsed.data.url);
+    await validatePublicHostname(normalized);
+    const result = await runBasicScan(normalized.toString());
 
     return NextResponse.json(result);
   } catch (error) {
