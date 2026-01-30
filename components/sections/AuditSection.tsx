@@ -119,6 +119,7 @@ export function AuditSection() {
     https: Lock,
     trackers: Cookie,
     consentBanner: Shield,
+    cookieConsent: Shield,
     secureForms: FormInput,
     responsiblePerson: UserCheck,
   };

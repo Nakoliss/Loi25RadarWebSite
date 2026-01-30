@@ -68,6 +68,7 @@
       "https": "HTTPS (SSL)",
       "trackers": "Cookies/Traceurs",
       "consentBanner": "Bannière de consentement",
+      "cookieConsent": "Consentement aux cookies",
       "secureForms": "Formulaires conformes",
       "responsiblePerson": "Responsable de la protection des renseignements personnels"
     },
@@ -85,6 +86,7 @@
       "https": "Activez HTTPS avec un certificat SSL valide.",
       "trackers": "Revoyez les traceurs et obtenez le consentement avant chargement.",
       "consentBanner": "Ajoutez une bannière de consentement aux cookies.",
+      "cookieConsent": "Assurez-vous d'obtenir le consentement avant de charger des traceurs/cookies.",
       "secureForms": "Assurez-vous que les formulaires recueillent le consentement.",
       "responsiblePerson": "Identifiez un responsable de la protection des renseignements personnels."
     },
