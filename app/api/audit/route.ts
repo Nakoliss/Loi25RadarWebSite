@@ -36,6 +36,8 @@ const CONSENT_PATTERNS = [
   /banni[eè]re/i,
   /gestion du consentement/i,
   /loi 25/i,
+  /accepter/i,
+  /refuser/i,
 ];
 
 const RESPONSIBLE_PERSON_PATTERNS = [
@@ -44,6 +46,8 @@ const RESPONSIBLE_PERSON_PATTERNS = [
   /privacy officer/i,
   /\bdpo\b/i,
   /responsable de la protection/i,
+  /privacy@/i,
+  /dpo@/i,
 ];
 
 function containsAnyPattern(content: string, patterns: RegExp[]) {
@@ -134,7 +138,7 @@ async function fetchWithTimeout(url: string, timeoutMs: number) {
       signal: controller.signal,
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; Loi25Scanner/1.0; +https://loi25.com)",
+          "Mozilla/5.0 (compatible; Loi25Scanner/1.0; +https://solutionsimpactweb.com)",
       },
     });
     return response;
@@ -179,11 +183,15 @@ async function runBasicScan(url: string) {
   const html = await readHtmlBody(response);
   const finalUrl = response.url || url;
 
+  // Détection des trackers et bannière
+  const hasTrackersDetected = hasTrackers(html);
+  const hasConsentBannerDetected = hasConsentBanner(html);
+
+  // Résultats du scan (4 critères principaux)
   const results = {
     privacyPolicy: hasPrivacyPolicyLink(html),
     https: new URL(finalUrl).protocol === "https:",
-    consentBanner: hasConsentBanner(html),
-    trackers: !hasTrackers(html),
+    cookieConsent: !hasTrackersDetected || hasConsentBannerDetected, // ✅ LOGIQUE CORRIGÉE
     responsiblePerson: hasResponsiblePerson(html),
   };
 
@@ -203,6 +211,12 @@ async function runBasicScan(url: string) {
   else if (score < 80) riskLevel = "medium";
   else riskLevel = "low";
 
+  // Détails supplémentaires pour le rapport
+  const details = {
+    trackersDetected: hasTrackersDetected,
+    consentBannerDetected: hasConsentBannerDetected,
+  };
+
   return {
     score,
     total,
@@ -210,7 +224,8 @@ async function runBasicScan(url: string) {
     results,
     missing,
     riskLevel,
-    recommendations: [],
+    details,
+    recommendations: [], // Peut être rempli plus tard avec des recommandations spécifiques
   };
 }
 
