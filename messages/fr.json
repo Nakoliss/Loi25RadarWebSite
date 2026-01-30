@@ -68,7 +68,8 @@
       "https": "HTTPS (SSL)",
       "trackers": "Cookies/Traceurs",
       "consentBanner": "Bannière de consentement",
-      "secureForms": "Formulaires conformes"
+      "secureForms": "Formulaires conformes",
+      "responsiblePerson": "Responsable de la protection des renseignements personnels"
     },
     "status": {
       "detected": "Détecté",
@@ -79,6 +80,14 @@
       "absent": "Absent"
     },
     "recommendations": "Recommandations",
+    "recommendationMessages": {
+      "privacyPolicy": "Ajoutez une politique de confidentialité accessible.",
+      "https": "Activez HTTPS avec un certificat SSL valide.",
+      "trackers": "Revoyez les traceurs et obtenez le consentement avant chargement.",
+      "consentBanner": "Ajoutez une bannière de consentement aux cookies.",
+      "secureForms": "Assurez-vous que les formulaires recueillent le consentement.",
+      "responsiblePerson": "Identifiez un responsable de la protection des renseignements personnels."
+    },
     "cta": {
       "fullAudit": "Demander un devis",
       "download": "Télécharger le résumé",

@@ -68,7 +68,8 @@
       "https": "HTTPS (SSL)",
       "trackers": "Cookies/Trackers",
       "consentBanner": "Consent Banner",
-      "secureForms": "Compliant Forms"
+      "secureForms": "Compliant Forms",
+      "responsiblePerson": "Privacy Officer"
     },
     "status": {
       "detected": "Detected",
@@ -79,6 +80,14 @@
       "absent": "Absent"
     },
     "recommendations": "Recommendations",
+    "recommendationMessages": {
+      "privacyPolicy": "Add a visible privacy policy page.",
+      "https": "Enable HTTPS with a valid SSL certificate.",
+      "trackers": "Review trackers and ensure consent before loading them.",
+      "consentBanner": "Add a cookie consent banner.",
+      "secureForms": "Ensure forms collect proper consent.",
+      "responsiblePerson": "Identify a privacy officer on your site."
+    },
     "cta": {
       "fullAudit": "Request a Quote",
       "download": "Download Summary",

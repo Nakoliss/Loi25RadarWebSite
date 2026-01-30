@@ -21,20 +21,16 @@ import {
   Cookie,
   FormInput,
   FileText,
+  UserCheck,
 } from "lucide-react";
 
 interface AuditResult {
   score: number;
-  riskLevel: "critical" | "high" | "medium" | "low";
+  riskLevel?: "critical" | "high" | "medium" | "low";
   scanTime: number;
-  results: {
-    privacyPolicy: boolean;
-    https: boolean;
-    trackers: boolean;
-    consentBanner: boolean;
-    secureForms: boolean;
-  };
-  recommendations: string[];
+  results: Record<string, boolean>;
+  recommendations?: string[];
+  missing?: string[];
 }
 
 export function AuditSection() {
@@ -104,6 +100,13 @@ export function AuditSection() {
     }
   };
 
+  const getRiskLevelFromScore = (score: number) => {
+    if (score < 40) return "critical";
+    if (score < 60) return "high";
+    if (score < 80) return "medium";
+    return "low";
+  };
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-400";
     if (score >= 60) return "text-yellow-400";
@@ -117,6 +120,7 @@ export function AuditSection() {
     trackers: Cookie,
     consentBanner: Shield,
     secureForms: FormInput,
+    responsiblePerson: UserCheck,
   };
 
   const resetAudit = () => {
@@ -124,6 +128,16 @@ export function AuditSection() {
     setResult(null);
     setError(null);
   };
+
+  const resolvedRiskLevel = result
+    ? result.riskLevel ?? getRiskLevelFromScore(result.score)
+    : "low";
+
+  const recommendations = result
+    ? result.missing?.map((key) => t(`recommendationMessages.${key}`)) ??
+      result.recommendations ??
+      []
+    : [];
 
   return (
     <section id="audit" className="py-20 sm:py-32">
@@ -233,7 +247,7 @@ export function AuditSection() {
                       </p>
                       <Badge
                         variant={
-                          getRiskColor(result.riskLevel) as
+                          getRiskColor(resolvedRiskLevel) as
                             | "success"
                             | "warning"
                             | "error"
@@ -242,7 +256,7 @@ export function AuditSection() {
                         }
                         className="text-lg px-4 py-2"
                       >
-                        {t(`riskLevels.${result.riskLevel}`)}
+                        {t(`riskLevels.${resolvedRiskLevel}`)}
                       </Badge>
                     </div>
 
@@ -271,7 +285,8 @@ export function AuditSection() {
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {Object.entries(result.results).map(([key, value]) => {
                       const Icon =
-                        criteriaIcons[key as keyof typeof criteriaIcons];
+                        criteriaIcons[key as keyof typeof criteriaIcons] ??
+                        AlertTriangle;
                       return (
                         <div
                           key={key}
@@ -302,7 +317,7 @@ export function AuditSection() {
               </Card>
 
               {/* Recommendations */}
-              {result.recommendations.length > 0 && (
+              {recommendations.length > 0 && (
                 <Card className="glass">
                   <CardHeader>
                     <CardTitle className="text-xl">
@@ -311,7 +326,7 @@ export function AuditSection() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {result.recommendations.map((rec, index) => (
+                      {recommendations.map((rec, index) => (
                         <li
                           key={index}
                           className="flex items-start gap-2 text-muted-foreground"

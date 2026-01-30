@@ -183,12 +183,13 @@ async function runBasicScan(url: string) {
     privacyPolicy: hasPrivacyPolicyLink(html),
     https: new URL(finalUrl).protocol === "https:",
     consentBanner: hasConsentBanner(html),
-    trackers: hasTrackers(html),
+    trackers: !hasTrackers(html),
     responsiblePerson: hasResponsiblePerson(html),
   };
 
-  const score = Object.values(results).filter(Boolean).length;
+  const passed = Object.values(results).filter(Boolean).length;
   const total = Object.keys(results).length;
+  const score = Math.round((passed / total) * 100);
 
   const missing = Object.entries(results)
     .filter(([, value]) => !value)
@@ -196,12 +197,20 @@ async function runBasicScan(url: string) {
 
   const scanTime = Math.max(1, Math.round((Date.now() - startTime) / 1000));
 
+  let riskLevel: "critical" | "high" | "medium" | "low";
+  if (score < 40) riskLevel = "critical";
+  else if (score < 60) riskLevel = "high";
+  else if (score < 80) riskLevel = "medium";
+  else riskLevel = "low";
+
   return {
     score,
     total,
     scanTime,
     results,
     missing,
+    riskLevel,
+    recommendations: [],
   };
 }
 
