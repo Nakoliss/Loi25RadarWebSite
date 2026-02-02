@@ -1,32 +1,39 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Loader } from "@/components/ui/loader";
-import {
-  Search,
-  AlertTriangle,
-  Download,
-  RefreshCw,
-  Mail,
-} from "lucide-react";
+import { Search, AlertTriangle, RefreshCw } from "lucide-react";
+
+interface AuditCheck {
+  id: string;
+  name: string;
+  passed: boolean;
+  icon: string;
+  description: string;
+  warning: string | null;
+}
+
+interface AuditRating {
+  level: "CRITIQUE" | "À AMÉLIORER" | "PASSABLE" | "BIEN";
+  color: string;
+  emoji: string;
+  message: string;
+}
 
 interface AuditResult {
-  score: number;
-  riskLevel?: "critical" | "high" | "medium" | "low";
-  scanTime: number;
-  results: Record<string, boolean>;
-  recommendations?: string[];
-  missing?: string[];
-  details?: {
-    trackersDetected?: boolean;
-    consentBannerDetected?: boolean;
-  };
+  success: boolean;
+  url: string;
+  rating: AuditRating;
+  checks: AuditCheck[];
+  passedCount: number;
+  totalChecks: number;
+  notTested: string[];
+  scannedAt: string;
 }
 
 export function AuditSection() {
@@ -41,7 +48,6 @@ export function AuditSection() {
     setError(null);
     setResult(null);
 
-    // Basic URL validation
     if (!url.trim()) {
       setError(t("error.invalidUrl"));
       return;
@@ -81,66 +87,15 @@ export function AuditSection() {
     }
   };
 
-  const getRiskLevelFromScore = (score: number) => {
-    if (score < 40) return "critical";
-    if (score < 60) return "high";
-    if (score < 80) return "medium";
-    return "low";
-  };
-
   const resetAudit = () => {
     setUrl("");
     setResult(null);
     setError(null);
   };
 
-  const criteriaTotal = 4;
-  const criteriaKeys = [
-    "privacyPolicy",
-    "https",
-    "cookieConsent",
-    "responsiblePerson",
-  ] as const;
-
-  const passedCriteria = result
-    ? criteriaKeys.filter((key) => result.results?.[key]).length
-    : 0;
-  const percentScore = Math.round((passedCriteria / criteriaTotal) * 100);
-
-  const resolvedRiskLevel = result
-    ? result.riskLevel ?? getRiskLevelFromScore(percentScore)
-    : "low";
-
-  const recommendations = result
-    ? result.missing?.map((key) => t(`recommendationMessages.${key}`)) ??
-      result.recommendations ??
-      []
-    : [];
-
-  const contactHref = (auditType: string) =>
-    `?auditType=${encodeURIComponent(auditType)}#contact`;
-
-  const riskClasses = {
-    critical: { text: "text-red-600", bg: "bg-red-50", badge: "bg-red-100 text-red-700" },
-    high: { text: "text-orange-600", bg: "bg-orange-50", badge: "bg-orange-100 text-orange-700" },
-    medium: { text: "text-yellow-600", bg: "bg-yellow-50", badge: "bg-yellow-100 text-yellow-700" },
-    low: { text: "text-green-600", bg: "bg-green-50", badge: "bg-green-100 text-green-700" },
-  } as const;
-
-  const scoreLabel = t("results.scoreLabel", {
-    passed: passedCriteria,
-    total: criteriaTotal,
-    percent: percentScore,
-  });
-
-  const ctaCopy = t.raw("resultsCta") as {
-    needsHelp: string;
-    report: string;
-    fixAll: string;
-    recommended: string;
-    congrats: string;
-    maintain: string;
-  };
+  const needsHelp =
+    result?.rating.level === "CRITIQUE" ||
+    result?.rating.level === "À AMÉLIORER";
 
   return (
     <section id="audit" className="py-20 sm:py-32">
@@ -222,216 +177,229 @@ export function AuditSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mt-10 space-y-6"
+              className="mt-10 space-y-8"
             >
-              {/* Score Header */}
-              <div
-                className={`rounded-lg border border-border p-6 text-center ${riskClasses[resolvedRiskLevel].bg}`}
-              >
-                <h2 className="text-3xl font-bold text-slate-900">
-                  {passedCriteria}/{criteriaTotal}
-                </h2>
-                <p className={`${riskClasses[resolvedRiskLevel].text} mt-2`}>
-                  {scoreLabel}
-                </p>
-                <span
-                  className={`mt-3 inline-block rounded-full px-3 py-1 text-sm ${riskClasses[resolvedRiskLevel].badge}`}
+              <div className="text-center p-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700">
+                <div className="text-6xl mb-4">{result.rating.emoji}</div>
+                <h2
+                  className="text-3xl font-bold mb-3"
+                  style={{ color: result.rating.color }}
                 >
-                  {t(`riskLevels.${resolvedRiskLevel}`)}
-                </span>
+                  {result.rating.level}
+                </h2>
+                <p className="text-slate-300 max-w-2xl mx-auto">
+                  {result.rating.message}
+                </p>
               </div>
 
-              {/* Criteria Results */}
-              <div className="space-y-4">
-                {criteriaKeys.map((key) => {
-                  const passed = Boolean(result.results?.[key]);
-                  const trackersDetected = Boolean(result.details?.trackersDetected);
+              <div className="space-y-4 mt-8">
+                <h3 className="text-xl font-semibold mb-4 text-white">
+                  Ce qui a été vérifié (4 critères de base)
+                </h3>
 
-                  let title = "";
-                  let description = "";
-                  let action = "";
-                  let extra = "";
-
-                  if (key === "privacyPolicy") {
-                    if (passed) {
-                      title = t("criteriaDetails.privacyPolicy.pass.title");
-                      description = t(
-                        "criteriaDetails.privacyPolicy.pass.description",
-                      );
-                    } else {
-                      title = t("criteriaDetails.privacyPolicy.fail.title");
-                      description = t(
-                        "criteriaDetails.privacyPolicy.fail.description",
-                      );
-                      action = t("criteriaDetails.privacyPolicy.fail.action");
-                    }
-                  }
-
-                  if (key === "https") {
-                    if (passed) {
-                      title = t("criteriaDetails.https.pass.title");
-                      description = t("criteriaDetails.https.pass.description");
-                    } else {
-                      title = t("criteriaDetails.https.fail.title");
-                      description = t("criteriaDetails.https.fail.description");
-                      action = t("criteriaDetails.https.fail.action");
-                    }
-                  }
-
-                  if (key === "cookieConsent") {
-                    if (passed) {
-                      title = t("criteriaDetails.cookieConsent.pass.title");
-                      if (!trackersDetected) {
-                        description = t(
-                          "criteriaDetails.cookieConsent.pass.noTrackersDescription",
-                        );
-                      } else {
-                        description = t(
-                          "criteriaDetails.cookieConsent.pass.withBannerDescription",
-                        );
-                      }
-                    } else {
-                      const trackersList = "Google Analytics, Facebook Pixel";
-                      title = t("criteriaDetails.cookieConsent.fail.title");
-                      description = t(
-                        "criteriaDetails.cookieConsent.fail.description",
-                      );
-                      action = t("criteriaDetails.cookieConsent.fail.action");
-                      extra = t("criteriaDetails.cookieConsent.fail.extra", {
-                        trackers: trackersList,
-                      });
-                    }
-                  }
-
-                  if (key === "responsiblePerson") {
-                    if (passed) {
-                      title = t("criteriaDetails.responsiblePerson.pass.title");
-                      description = t(
-                        "criteriaDetails.responsiblePerson.pass.description",
-                      );
-                    } else {
-                      title = t("criteriaDetails.responsiblePerson.fail.title");
-                      description = t(
-                        "criteriaDetails.responsiblePerson.fail.description",
-                      );
-                      action = t("criteriaDetails.responsiblePerson.fail.action");
-                    }
-                  }
-
-                  return (
-                    <div
-                      key={key}
-                      className={`flex items-start gap-4 rounded-lg border p-4 ${
-                        passed
-                          ? "border-green-200 bg-green-50"
-                          : "border-red-200 bg-red-50"
-                      }`}
-                    >
-                      <div
-                        className={`text-2xl ${
-                          passed ? "text-green-500" : "text-red-500"
-                        }`}
-                      >
-                        {passed ? "✅" : "❌"}
-                      </div>
+                {result.checks.map((check) => (
+                  <div
+                    key={check.id}
+                    className={`p-6 rounded-lg border-2 ${
+                      check.passed
+                        ? "bg-green-50 border-green-500"
+                        : "bg-red-50 border-red-500"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-3xl">{check.icon}</span>
                       <div className="flex-1">
-                        <h3
-                          className={`font-semibold ${
-                            passed ? "text-green-700" : "text-red-700"
-                          }`}
-                        >
-                          {title}
-                        </h3>
-                        <p
-                          className={`mt-1 text-sm ${
-                            passed ? "text-green-600" : "text-red-600"
-                          }`}
-                        >
-                          {description}
+                        <div className="flex items-center gap-2 mb-2">
+                          <span
+                            className={`text-2xl ${
+                              check.passed ? "text-green-600" : "text-red-600"
+                            }`}
+                          >
+                            {check.passed ? "\u2705" : "\u274C"}
+                          </span>
+                          <h4 className="font-semibold text-lg text-slate-900">
+                            {check.name}
+                          </h4>
+                        </div>
+                        <p className="text-slate-700 mb-2">
+                          {check.description}
                         </p>
-                        {extra && (
-                          <p className="mt-1 text-xs text-red-600">{extra}</p>
-                        )}
-                        {action && (
-                          <button className="mt-2 text-sm text-red-600 underline">
-                            {action}
-                          </button>
+                        {check.warning && (
+                          <p className="text-slate-600 text-sm italic bg-slate-100 p-3 rounded">
+                            {check.warning}
+                          </p>
                         )}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Recommendations */}
-              {recommendations.length > 0 && (
-                <Card className="glass">
-                  <CardHeader>
-                    <CardTitle className="text-xl">
-                      {t("recommendations")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {recommendations.map((rec, index) => (
-                        <li
-                          key={index}
-                          className="flex items-start gap-2 text-muted-foreground"
-                        >
-                          <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-400" />
-                          {rec}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* CTA After Results */}
-              {percentScore < 100 ? (
-                <div className="rounded-lg border border-border bg-slate-50 p-6">
-                  <h3 className="mb-4 font-bold text-slate-900">
-                    {ctaCopy.needsHelp}
-                  </h3>
-                  <div className="flex flex-col gap-4 sm:flex-row">
-                    <Button asChild variant="outline" className="w-full">
-                      <a href={contactHref("scanOnly")}>{ctaCopy.report}</a>
-                    </Button>
-                    <div className="relative w-full">
-                      <div className="absolute -top-3 right-3">
-                        <Badge variant="success">{ctaCopy.recommended}</Badge>
-                      </div>
-                      <Button asChild className="w-full gradient-primary">
-                        <a href={contactHref("scanFix")}>{ctaCopy.fixAll}</a>
-                      </Button>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              <div className="mt-12 p-8 bg-amber-50 border-2 border-amber-500 rounded-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-4xl">{"\u26A0\uFE0F"}</span>
+                  <h3 className="text-2xl font-bold text-amber-900">
+                    8 CRITÈRES CRITIQUES NON VÉRIFIÉS
+                  </h3>
+                </div>
+
+                <p className="text-amber-900 mb-6 font-medium">
+                  Ce scan gratuit vérifie uniquement la PRÉSENCE d'éléments de
+                  base. Les critères suivants ne sont PAS analysés:
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-3">
+                  {result.notTested.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 text-amber-900"
+                    >
+                      <span className="text-xl mt-0.5">{"\u2753"}</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 p-4 bg-white rounded-lg border border-amber-300">
+                  <p className="text-sm text-amber-900">
+                    <strong>{"\u{1F4CB}"} Le scan complet</strong> analyse ces 8
+                    critères supplémentaires + le CONTENU détaillé de votre
+                    politique de confidentialité avec validation IA.
+                  </p>
+                </div>
+              </div>
+
+              {needsHelp ? (
+                <div className="mt-12 p-8 bg-red-50 border-2 border-red-500 rounded-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-4xl">{"\u{1F6A8}"}</span>
+                    <h3 className="text-2xl font-bold text-red-900">
+                      PROCHAINES ÉTAPES RECOMMANDÉES
+                    </h3>
+                  </div>
+
+                  <p className="text-red-900 mb-6">
+                    Votre site nécessite des correctifs pour assurer la
+                    conformité Loi 25.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-white p-6 rounded-lg border-2 border-violet-500">
+                      <h4 className="font-bold text-lg mb-2">Scan Complet</h4>
+                      <p className="text-3xl font-bold text-violet-600 mb-3">
+                        199$
+                      </p>
+                      <ul className="text-sm space-y-1 mb-4">
+                        <li>{"\u2713"} Analyse des 12 critères</li>
+                        <li>{"\u2713"} Rapport PDF détaillé</li>
+                        <li>{"\u2713"} Plan d'action priorisé</li>
+                        <li>{"\u2713"} Guide de corrections</li>
+                      </ul>
+                      <a
+                        href="#contact"
+                        className="block w-full text-center bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700"
+                      >
+                        Obtenir le scan complet
+                      </a>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-violet-600 to-purple-600 text-white p-6 rounded-lg border-2 border-purple-700 relative">
+                      <div className="absolute -top-3 -right-3 bg-yellow-400 text-purple-900 px-3 py-1 rounded-full text-xs font-bold">
+                        {"\u2B50"} POPULAIRE
+                      </div>
+                      <h4 className="font-bold text-lg mb-2">
+                        Scan + Corrections
+                      </h4>
+                      <p className="text-3xl font-bold mb-3">699$</p>
+                      <ul className="text-sm space-y-1 mb-4">
+                        <li>{"\u2713"} Tout inclus dans Scan Complet</li>
+                        <li>{"\u2713"} Nous corrigeons TOUT pour vous</li>
+                        <li>{"\u2713"} Certificat de conformité</li>
+                        <li>{"\u2713"} Support 30 jours</li>
+                      </ul>
+                      <a
+                        href="#contact"
+                        className="block w-full text-center bg-white text-purple-700 py-3 rounded-lg font-semibold hover:bg-slate-100"
+                      >
+                        On corrige tout pour vous
+                      </a>
+                    </div>
+                  </div>
+
+                  <p className="text-center mt-6 text-red-900 font-semibold">
+                    {"\u{1F525}"} Offre de lancement: 50% de rabais pour les 5
+                    premiers clients
+                  </p>
                 </div>
               ) : (
-                <div className="rounded-lg border border-border bg-slate-50 p-6">
-                  <h3 className="mb-4 font-bold text-slate-900">
-                    {ctaCopy.congrats}
-                  </h3>
-                  <Button asChild className="gradient-primary">
-                    <a href={contactHref("complianceManager")}>
-                      {ctaCopy.maintain}
+                <div className="mt-12 p-8 bg-green-50 border-2 border-green-500 rounded-xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-4xl">{"\u2705"}</span>
+                    <h3 className="text-2xl font-bold text-green-900">
+                      BONNE NOUVELLE!
+                    </h3>
+                  </div>
+
+                  <p className="text-green-900 mb-4">
+                    Votre site a les éléments de base en place.
+                  </p>
+
+                  <div className="bg-amber-100 border border-amber-400 rounded-lg p-6 mb-6">
+                    <p className="text-amber-900 font-semibold mb-3">
+                      {"\u26A0\uFE0F"} MAIS attention: Ce scan gratuit ne vérifie
+                      que 4 critères sur 12.
+                    </p>
+                    <p className="text-amber-900 text-sm mb-2">
+                      <strong>RISQUES NON VÉRIFIÉS:</strong>
+                    </p>
+                    <ul className="text-amber-900 text-sm space-y-1">
+                      <li>
+                        {"\u2022"} Contenu de votre politique (conforme Loi 25?)
+                      </li>
+                      <li>
+                        {"\u2022"} Droits des utilisateurs (correctement
+                        documentés?)
+                      </li>
+                      <li>
+                        {"\u2022"} Gestion des formulaires (consentement valide?)
+                      </li>
+                      <li>
+                        {"\u2022"} Cookies tiers (activés sans permission?)
+                      </li>
+                      <li>{"\u2022"} Et 4 autres critères critiques...</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-lg border-2 border-violet-500">
+                    <h4 className="font-bold text-lg mb-2">
+                      Obtenez la certification complète
+                    </h4>
+                    <p className="text-violet-600 text-2xl font-bold mb-3">
+                      À partir de 199$
+                    </p>
+                    <p className="text-slate-700 mb-4">
+                      Assurez-vous à 100% d'être conforme avec notre scan
+                      complet qui analyse les 12 critères + génère votre
+                      certificat officiel.
+                    </p>
+                    <ul className="text-sm space-y-1 mb-4">
+                      <li>{"\u2713"} Rapport détaillé PDF avec screenshots</li>
+                      <li>
+                        {"\u2713"} Plan d'action si correctifs nécessaires
+                      </li>
+                      <li>{"\u2713"} Certificat de conformité (si 100%)</li>
+                    </ul>
+                    <a
+                      href="#contact"
+                      className="block w-full text-center bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700"
+                    >
+                      Obtenir le scan complet - 199$
                     </a>
-                  </Button>
+                  </div>
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Button size="lg" asChild>
-                  <a href="#contact">
-                    <Mail className="h-4 w-4" />
-                    {t("cta.fullAudit")}
-                  </a>
-                </Button>
-                <Button variant="outline" size="lg">
-                  <Download className="h-4 w-4" />
-                  {t("cta.download")}
-                </Button>
+              <div className="flex justify-center">
                 <Button variant="ghost" size="lg" onClick={resetAudit}>
                   <RefreshCw className="h-4 w-4" />
                   {t("cta.scanAnother")}

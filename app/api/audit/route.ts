@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const auditSchema = z.object({
@@ -7,82 +7,167 @@ const auditSchema = z.object({
 
 const MAX_HTML_BYTES = 1_000_000;
 
-const TRACKER_SIGNATURES = [
-  "google-analytics.com",
-  "googletagmanager.com",
-  "gtag/js",
-  "connect.facebook.net",
-  "facebook.com/tr",
-  "facebook.net/tr",
-];
+const scanCache = new Map<string, { data: ScanResponse; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000;
 
-const PRIVACY_POLICY_PATTERNS = [
-  /politique de confidentialit/i,
-  /privacy policy/i,
-  /politique de vie priv/i,
-];
-
-const PRIVACY_POLICY_PATHS = [
-  "/privacy",
-  "/confidentialite",
-  "/confidentialit",
-  "/politique",
-  "/privacy-policy",
+const PRIVACY_EMAILS = [
+  "privacy@",
+  "confidentialite@",
+  "vie-privee@",
+  "vieprivee@",
+  "protection@",
+  "protectiondesdonnees@",
+  "dpo@",
+  "dataprotection@",
+  "donnees@",
+  "rgpd@",
+  "responsable@",
+  "privacite@",
 ];
 
 const CONSENT_PATTERNS = [
   /cookie/i,
   /consent/i,
-  /banni[eè]re/i,
+  /banni[e\u00E8]re/i,
   /gestion du consentement/i,
   /loi 25/i,
   /accepter/i,
   /refuser/i,
 ];
 
-const RESPONSIBLE_PERSON_PATTERNS = [
-  /responsable/i,
-  /protection des renseignements personnels/i,
-  /privacy officer/i,
-  /\bdpo\b/i,
-  /responsable de la protection/i,
-  /privacy@/i,
-  /dpo@/i,
-];
+type RatingLevel = "CRITIQUE" | "À AMÉLIORER" | "PASSABLE" | "BIEN";
+
+interface Rating {
+  level: RatingLevel;
+  color: string;
+  emoji: string;
+  message: string;
+}
+
+interface CheckResult {
+  id: string;
+  name: string;
+  passed: boolean;
+  icon: string;
+  description: string;
+  warning: string | null;
+}
+
+interface ScanResponse {
+  success: true;
+  url: string;
+  rating: Rating;
+  checks: CheckResult[];
+  passedCount: number;
+  totalChecks: number;
+  notTested: string[];
+  scannedAt: string;
+}
 
 function containsAnyPattern(content: string, patterns: RegExp[]) {
   return patterns.some((pattern) => pattern.test(content));
-}
-
-function hasPrivacyPolicyLink(html: string) {
-  if (containsAnyPattern(html, PRIVACY_POLICY_PATTERNS)) {
-    return true;
-  }
-
-  const linkRegex = /href\s*=\s*["']([^"']+)["']/gi;
-  let match = linkRegex.exec(html);
-  while (match) {
-    const href = match[1].toLowerCase();
-    if (PRIVACY_POLICY_PATHS.some((path) => href.includes(path))) {
-      return true;
-    }
-    match = linkRegex.exec(html);
-  }
-
-  return false;
 }
 
 function hasConsentBanner(html: string) {
   return containsAnyPattern(html, CONSENT_PATTERNS);
 }
 
-function hasTrackers(html: string) {
-  const lower = html.toLowerCase();
-  return TRACKER_SIGNATURES.some((signature) => lower.includes(signature));
+async function checkPrivacyContact(
+  url: string,
+  html: string,
+): Promise<{
+  found: boolean;
+  email: string | null;
+}> {
+  const domain = new URL(url).hostname.replace("www.", "");
+  const lowerHtml = html.toLowerCase();
+
+  for (const emailPrefix of PRIVACY_EMAILS) {
+    const fullEmail = emailPrefix + domain;
+
+    if (lowerHtml.includes(fullEmail.toLowerCase())) {
+      return { found: true, email: fullEmail };
+    }
+
+    if (lowerHtml.includes(emailPrefix)) {
+      return { found: true, email: emailPrefix + domain };
+    }
+  }
+
+  return { found: false, email: null };
 }
 
-function hasResponsiblePerson(html: string) {
-  return containsAnyPattern(html, RESPONSIBLE_PERSON_PATTERNS);
+async function checkPrivacyPolicy(baseUrl: string): Promise<boolean> {
+  const paths = [
+    "/privacy",
+    "/privacy-policy",
+    "/confidentialite",
+    "/politique-confidentialite",
+    "/politique-de-confidentialite",
+    "/vie-privee",
+    "/protection-donnees",
+    "/fr/privacy",
+    "/fr/confidentialite",
+    "/en/privacy",
+  ];
+
+  for (const path of paths) {
+    try {
+      const testUrl = new URL(path, baseUrl).href;
+      const response = await fetch(testUrl, {
+        method: "HEAD",
+        signal: AbortSignal.timeout(5000),
+      });
+
+      if (response.ok) {
+        return true;
+      }
+    } catch (error) {
+      continue;
+    }
+  }
+
+  return false;
+}
+
+function getQualitativeRating(passedChecks: number): Rating {
+  if (passedChecks <= 1) {
+    return {
+      level: "CRITIQUE",
+      color: "#EF4444",
+      emoji: "\u{1F534}",
+      message:
+        "Votre site présente des lacunes majeures en conformité Loi 25. Action immédiate recommandée pour éviter les risques d'amendes.",
+    };
+  }
+
+  if (passedChecks === 2) {
+    return {
+      level: "À AMÉLIORER",
+      color: "#F97316",
+      emoji: "\u{1F7E0}",
+      message:
+        "Votre site a quelques éléments de base en place, mais des correctifs importants sont nécessaires pour assurer la conformité complète.",
+    };
+  }
+
+  if (passedChecks === 3) {
+    return {
+      level: "PASSABLE",
+      color: "#EAB308",
+      emoji: "\u{1F7E1}",
+      message:
+        "Votre site respecte plusieurs exigences de base, mais certains éléments critiques manquent encore.",
+    };
+  }
+
+  return {
+    level: "BIEN",
+    color: "#22C55E",
+    emoji: "\u{1F7E2}",
+    message:
+      "Votre site respecte les 4 critères de base vérifiés. \u26A0\uFE0F Attention: Ce scan ne couvre que les éléments visibles de base. 8 critères supplémentaires plus approfondis n'ont pas été testés.",
+  };
 }
 
 function isPrivateIp(ip: string) {
@@ -172,8 +257,7 @@ async function readHtmlBody(response: Response) {
   return decoder.decode(Buffer.concat(chunks));
 }
 
-async function runBasicScan(url: string) {
-  const startTime = Date.now();
+async function runBasicScan(url: string): Promise<ScanResponse> {
   const response = await fetchWithTimeout(url, 25000);
   const contentType = response.headers.get("content-type") ?? "";
   const isHtml = contentType.includes("text/html");
@@ -183,57 +267,103 @@ async function runBasicScan(url: string) {
   const html = await readHtmlBody(response);
   const finalUrl = response.url || url;
 
-  // Détection des trackers et bannière
-  const hasTrackersDetected = hasTrackers(html);
-  const hasConsentBannerDetected = hasConsentBanner(html);
+  const privacyContact = await checkPrivacyContact(finalUrl, html);
+  const hasPrivacyPolicy = await checkPrivacyPolicy(finalUrl);
+  const hasHttps = finalUrl.startsWith("https://");
+  const hasCookieBanner = hasConsentBanner(html);
 
-  // Résultats du scan (4 critères principaux)
-  const results = {
-    privacyPolicy: hasPrivacyPolicyLink(html),
-    https: new URL(finalUrl).protocol === "https:",
-    cookieConsent: !hasTrackersDetected || hasConsentBannerDetected, // ✅ LOGIQUE CORRIGÉE
-    responsiblePerson: hasResponsiblePerson(html),
-  };
+  const checks: CheckResult[] = [
+    {
+      id: "https",
+      name: "HTTPS Actif",
+      passed: hasHttps,
+      icon: "\u{1F512}",
+      description: hasHttps
+        ? "Votre site utilise un certificat SSL valide."
+        : "Votre site n'utilise pas HTTPS. C'est obligatoire pour protéger les données transmises.",
+      warning: hasHttps
+        ? null
+        : "Activez un certificat SSL (Let's Encrypt gratuit ou via votre hébergeur).",
+    },
+    {
+      id: "cookie-banner",
+      name: "Bannière Consentement Cookies",
+      passed: hasCookieBanner,
+      icon: "\u{1F36A}",
+      description: hasCookieBanner
+        ? "Une bannière de gestion des cookies a été détectée."
+        : "Aucune bannière de gestion des cookies détectée.",
+      warning: hasCookieBanner
+        ? null
+        : "Obligatoire si vous utilisez Google Analytics, Meta Pixel, GTM, ou tout autre tracker.",
+    },
+    {
+      id: "privacy-policy",
+      name: "Politique de Confidentialité",
+      passed: hasPrivacyPolicy,
+      icon: "\u{1F4C4}",
+      description: hasPrivacyPolicy
+        ? "Une politique de confidentialité a été trouvée."
+        : "Aucune politique de confidentialité détectée.",
+      warning: hasPrivacyPolicy
+        ? "\u26A0\uFE0F Le CONTENU de votre politique n'a pas été analysé dans ce scan gratuit."
+        : "Créez une politique de confidentialité accessible depuis votre site (lien dans le footer).",
+    },
+    {
+      id: "privacy-contact",
+      name: "Contact Responsable Protection",
+      passed: privacyContact.found,
+      icon: "\u{1F4E7}",
+      description: privacyContact.found
+        ? `Un email de protection des données a été détecté${
+            privacyContact.email ? ": " + privacyContact.email : ""
+          }.`
+        : "Aucun email privacy@, confidentialite@ ou mention de responsable détecté.",
+      warning: privacyContact.found
+        ? "\u26A0\uFE0F Non vérifié: Le responsable est-il nommé? Les informations sont-elles complètes et dans la politique officielle?"
+        : "Créez un email dédié (privacy@votredomaine.com ou confidentialite@votredomaine.com) et nommez un responsable dans votre politique.",
+    },
+  ];
 
-  const passed = Object.values(results).filter(Boolean).length;
-  const total = Object.keys(results).length;
-  const score = Math.round((passed / total) * 100);
+  const passedCount = checks.filter((check) => check.passed).length;
+  const rating = getQualitativeRating(passedCount);
 
-  const missing = Object.entries(results)
-    .filter(([, value]) => !value)
-    .map(([key]) => key);
-
-  const scanTime = Math.max(1, Math.round((Date.now() - startTime) / 1000));
-
-  let riskLevel: "critical" | "high" | "medium" | "low";
-  if (score < 40) riskLevel = "critical";
-  else if (score < 60) riskLevel = "high";
-  else if (score < 80) riskLevel = "medium";
-  else riskLevel = "low";
-
-  // Détails supplémentaires pour le rapport
-  const details = {
-    trackersDetected: hasTrackersDetected,
-    consentBannerDetected: hasConsentBannerDetected,
-  };
+  const notTested = [
+    "Votre politique mentionne-t-elle la Loi 25, RGPD ou LPRPDE?",
+    "Les droits des utilisateurs sont-ils documentés (accès, suppression, portabilité)?",
+    "Votre politique est-elle à jour (moins de 2 ans)?",
+    "Les transferts de données sont-ils divulgués (où sont stockées les données)?",
+    "Un mécanisme de suppression des données est-il disponible?",
+    "Vos formulaires ont-ils des checkboxes de consentement non pré-cochées?",
+    "Des cookies tiers sont-ils activés sans consentement préalable?",
+    "Votre responsable de protection est-il clairement nommé avec contact complet?",
+  ];
 
   return {
-    score,
-    total,
-    scanTime,
-    results,
-    missing,
-    riskLevel,
-    details,
-    recommendations: [], // Peut être rempli plus tard avec des recommandations spécifiques
+    success: true,
+    url: finalUrl,
+    rating,
+    checks,
+    passedCount,
+    totalChecks: 4,
+    notTested,
+    scannedAt: new Date().toISOString(),
   };
 }
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of scanCache.entries()) {
+    if (now - value.timestamp > CACHE_DURATION) {
+      scanCache.delete(key);
+    }
+  }
+}, CACHE_DURATION);
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate input
     const parsed = auditSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -244,7 +374,20 @@ export async function POST(request: NextRequest) {
 
     const normalized = normalizeUrl(parsed.data.url);
     await validatePublicHostname(normalized);
-    const result = await runBasicScan(normalized.toString());
+    const normalizedUrl = normalized.toString();
+    const cacheKey = `scan:${normalizedUrl}`;
+    const cached = scanCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return NextResponse.json(cached.data);
+    }
+
+    const result = await runBasicScan(normalizedUrl);
+
+    scanCache.set(cacheKey, {
+      data: result,
+      timestamp: Date.now(),
+    });
 
     return NextResponse.json(result);
   } catch (error) {
