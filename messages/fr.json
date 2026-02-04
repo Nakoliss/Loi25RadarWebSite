@@ -5,7 +5,7 @@
     "description": "Sites web modernes, visibilité Google et moteurs de réponses propulsés par l'intelligence artificielle, avec conformité Loi 25.",
     "email": "info@solutionsimpactweb.com",
     "phone": "(438) 503-3898",
-    "address": "Montréal, QC Canada",
+    "address": "Terrebonne, QC Canada",
     "responsible": {
       "title": "Responsable de la protection des renseignements personnels",
       "name": "Daniel Germain",
@@ -392,7 +392,10 @@
         "scanOnly": "Scan Complet - 199$",
         "scanFix": "Scan Complet + Correction - 699$",
         "complianceManager": "Gestionnaire de Conformité - 699$ + 79$/mois"
-      }
+      },
+      "consentLabel": "J'accepte que mes informations soient utilisées conformément à la",
+      "privacyPolicyLink": "politique de confidentialité",
+      "consentError": "Vous devez accepter la politique de confidentialité pour continuer."
     },
     "successTitle": "Message envoyé!",
     "sendAnother": "Envoyer un autre message",

@@ -8,7 +8,9 @@ import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { CookieBanner } from "@/components/CookieBanner";
+// Old banner (visual only, doesn't block trackers)
+// import { CookieBanner } from "@/components/CookieBanner";
+import { TarteaucitronBanner } from "@/components/TarteaucitronBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -54,6 +56,9 @@ export async function generateMetadata({
           "protection donnees",
         ],
     authors: [{ name: "Solutions Impact Web" }],
+    icons: {
+      icon: "/favicon.ico",
+    },
     openGraph: {
       title: isEn
         ? "Loi 25 Radar - Law 25 Compliance"
@@ -64,6 +69,14 @@ export async function generateMetadata({
       siteName: "Loi 25 Radar",
       locale: isEn ? "en_CA" : "fr_CA",
       type: "website",
+      images: [
+        {
+          url: "/logo.png",
+          width: 400,
+          height: 100,
+          alt: "Solutions Impact Web - Loi 25 Radar",
+        },
+      ],
     },
   };
 }
@@ -106,7 +119,8 @@ export default async function LocaleLayout({
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
-            <CookieBanner />
+            {/* Tarteaucitron.js - Real cookie consent with tracker blocking */}
+            <TarteaucitronBanner />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

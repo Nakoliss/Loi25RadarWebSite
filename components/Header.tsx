@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, Shield } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export function Header() {
   const t = useTranslations("navigation");
@@ -35,8 +36,15 @@ export function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-            <Shield className="h-6 w-6 text-white" />
+          <div className="relative h-14 w-14">
+            <Image
+              src="/logo-icon.png"
+              alt="Solutions Impact Web"
+              width={56}
+              height={56}
+              className="object-contain"
+              priority
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-medium text-primary">

@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Shield, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   const t = useTranslations("footer");
@@ -16,8 +17,14 @@ export function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-                <Shield className="h-6 w-6 text-white" />
+              <div className="relative h-12 w-12">
+                <Image
+                  src="/logo-icon.png"
+                  alt="Solutions Impact Web"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-primary">
@@ -31,7 +38,9 @@ export function Footer() {
             <p className="mt-2 text-sm text-muted-foreground">
               {tc("division")}
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">{t("description")}</p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              {t("description")}
+            </p>
 
             <div className="mt-6 space-y-2">
               <a
@@ -144,7 +153,15 @@ export function Footer() {
               <p className="mt-4 text-sm text-muted-foreground">
                 {t("preferencesNote")}
               </p>
-              <button className="mt-2 rounded-full border border-primary/50 px-4 py-2 text-sm text-primary transition-all hover:bg-primary/10">
+              <button
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    // Open Tarteaucitron panel
+                    window.dispatchEvent(new Event("openTarteaucitronPanel"));
+                  }
+                }}
+                className="mt-2 rounded-full border border-primary/50 px-4 py-2 text-sm text-primary transition-all hover:bg-primary/10"
+              >
                 {t("preferencesButton")}
               </button>
             </div>

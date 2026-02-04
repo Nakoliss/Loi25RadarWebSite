@@ -20,6 +20,7 @@ const contactSchema = z.object({
   domain: z.string().optional(),
   auditType: z.string().optional(),
   message: z.string().max(500).optional(),
+  consent: z.literal(true, { message: "Consent is required" }),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -30,6 +31,7 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const {
     register,
@@ -92,8 +94,7 @@ export function ContactSection() {
         if (queryIndex !== -1) {
           const hashQuery = window.location.hash.slice(queryIndex + 1);
           const hashParams = new URLSearchParams(hashQuery);
-          prefill =
-            hashParams.get("auditType") || hashParams.get("plan") || "";
+          prefill = hashParams.get("auditType") || hashParams.get("plan") || "";
         }
       }
 
@@ -268,6 +269,42 @@ export function ContactSection() {
                     />
                   </div>
 
+                  {/* Consent Checkbox */}
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="consent"
+                      {...register("consent")}
+                      checked={consentChecked}
+                      onChange={(e) => setConsentChecked(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-border bg-input text-primary focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="consent"
+                      className={`text-sm ${
+                        errors.consent
+                          ? "text-red-400"
+                          : "text-muted-foreground"
+                      } cursor-pointer`}
+                    >
+                      {t("form.consentLabel")}{" "}
+                      <a
+                        href={`/${locale}/confidentialite`}
+                        className="text-primary hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t("form.privacyPolicyLink")}
+                      </a>{" "}
+                      *
+                    </label>
+                  </div>
+                  {errors.consent && (
+                    <p className="text-xs text-red-400">
+                      {t("form.consentError")}
+                    </p>
+                  )}
+
                   {error && (
                     <div className="flex items-center gap-2 text-red-400">
                       <AlertTriangle className="h-4 w-4" />
@@ -279,7 +316,7 @@ export function ContactSection() {
                     type="submit"
                     size="lg"
                     className="w-full"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !consentChecked}
                   >
                     {isSubmitting ? (
                       <Loader size="sm" />

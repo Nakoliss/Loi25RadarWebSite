@@ -30,6 +30,16 @@ export function CookieBanner() {
       const timer = setTimeout(() => setIsVisible(true), 1000);
       return () => clearTimeout(timer);
     }
+
+    // Listen for reopen event from Footer button
+    const handleReopenBanner = () => {
+      setIsVisible(true);
+      setShowSettings(true); // Open directly to settings
+    };
+
+    window.addEventListener("reopenCookieBanner", handleReopenBanner);
+    return () =>
+      window.removeEventListener("reopenCookieBanner", handleReopenBanner);
   }, []);
 
   const saveConsent = (type: "all" | "reject" | "custom") => {
@@ -202,7 +212,7 @@ export function CookieBanner() {
             </>
           )}
           <p className="mt-4 text-center text-xs text-muted-foreground">
-            {t("learnMorePrefix")} {" "}
+            {t("learnMorePrefix")}{" "}
             <Link href="/cookies" className="text-primary hover:underline">
               {t("cookiePolicyLabel")}
             </Link>{" "}

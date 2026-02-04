@@ -50,7 +50,7 @@ export default async function PrivacyPage({
                     privacy@solutionsimpactweb.com
                   </a>
                   <br />
-                  Address: Montreal, QC Canada
+                  Address: Terrebonne, QC Canada
                 </p>
               </div>
 
@@ -59,8 +59,8 @@ export default async function PrivacyPage({
                   1. Introduction and commitment
                 </h2>
                 <p className="text-muted-foreground">
-                  Solutions Impact Web Inc. (we, our, us), operating
-                  under the Loi 25 Radar brand, is committed to protecting the
+                  Solutions Impact Web Inc. (we, our, us), operating under the
+                  Loi 25 Radar brand, is committed to protecting the
                   confidentiality of your personal information in accordance
                   with Quebec Law 25 (Act to modernize legislative provisions
                   respecting the protection of personal information) and the
@@ -183,7 +183,8 @@ export default async function PrivacyPage({
                   </li>
                   <li>
                     <strong>Right to complain:</strong> File a complaint with
-                    the Commission d&apos;acces a l&apos;information (CAI) of Quebec
+                    the Commission d&apos;acces a l&apos;information (CAI) of
+                    Quebec
                   </li>
                 </ul>
                 <p className="mt-4 text-muted-foreground">
@@ -205,7 +206,8 @@ export default async function PrivacyPage({
                   6. Security measures
                 </h2>
                 <p className="text-muted-foreground">
-                  We implement appropriate technical and organizational measures:
+                  We implement appropriate technical and organizational
+                  measures:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground">
                   <li>SSL/TLS encryption for all transmissions</li>
@@ -221,7 +223,10 @@ export default async function PrivacyPage({
                 </h2>
                 <p className="text-muted-foreground">
                   This site uses cookies. See our{" "}
-                  <Link href="/cookies" className="text-primary hover:underline">
+                  <Link
+                    href="/cookies"
+                    className="text-primary hover:underline"
+                  >
                     Cookie Policy
                   </Link>{" "}
                   for details and to manage your preferences.
@@ -236,7 +241,9 @@ export default async function PrivacyPage({
                   Some data may be processed by our subprocessors:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground">
-                  <li>Vercel (hosting) - United States (contractual clauses)</li>
+                  <li>
+                    Vercel (hosting) - United States (contractual clauses)
+                  </li>
                   <li>Resend (email) - United States</li>
                   <li>Stripe (payments) - United States</li>
                 </ul>
@@ -266,7 +273,9 @@ export default async function PrivacyPage({
               </section>
 
               <section>
-                <h2 className="text-xl font-semibold text-white">11. Contact</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  11. Contact
+                </h2>
                 <p className="text-muted-foreground">
                   For any questions regarding this policy or your personal
                   information:
@@ -289,7 +298,7 @@ export default async function PrivacyPage({
                     <br />
                     Phone: (438) 503-3898
                     <br />
-                    Address: Montreal, QC Canada
+                    Address: Terrebonne, QC Canada
                   </p>
                 </div>
               </section>
@@ -334,7 +343,7 @@ export default async function PrivacyPage({
                   privacy@solutionsimpactweb.com
                 </a>
                 <br />
-                Adresse: Montréal, QC Canada
+                Adresse: Terrebonne, QC Canada
               </p>
             </div>
 
@@ -583,7 +592,7 @@ export default async function PrivacyPage({
                   <br />
                   Téléphone: (438) 503-3898
                   <br />
-                  Adresse: Montréal, QC Canada
+                  Adresse: Terrebonne, QC Canada
                 </p>
               </div>
             </section>

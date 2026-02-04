@@ -5,7 +5,7 @@
     "description": "Modern websites, Google visibility and AI-powered answer engines, with Law 25 compliance.",
     "email": "info@solutionsimpactweb.com",
     "phone": "(438) 503-3898",
-    "address": "Montreal, QC Canada",
+    "address": "Terrebonne, QC Canada",
     "responsible": {
       "title": "Personal Information Protection Officer",
       "name": "Daniel Germain",
@@ -392,7 +392,10 @@
         "scanOnly": "Complete Scan - $199",
         "scanFix": "Complete Scan + Fix - $699",
         "complianceManager": "Compliance Manager - $699 + $79/month"
-      }
+      },
+      "consentLabel": "I agree that my information may be used in accordance with the",
+      "privacyPolicyLink": "privacy policy",
+      "consentError": "You must accept the privacy policy to continue."
     },
     "successTitle": "Message sent!",
     "sendAnother": "Send another message",
