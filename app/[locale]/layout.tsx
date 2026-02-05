@@ -8,9 +8,7 @@ import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-// Old banner (visual only, doesn't block trackers)
-// import { CookieBanner } from "@/components/CookieBanner";
-import { TarteaucitronBanner } from "@/components/TarteaucitronBanner";
+import { SimpleCookieBanner } from "@/components/SimpleCookieBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -119,10 +117,10 @@ export default async function LocaleLayout({
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
-            {/* Tarteaucitron.js - Real cookie consent with tracker blocking */}
-            <TarteaucitronBanner />
           </NextIntlClientProvider>
         </ThemeProvider>
+
+        <SimpleCookieBanner locale={locale} />
       </body>
     </html>
   );

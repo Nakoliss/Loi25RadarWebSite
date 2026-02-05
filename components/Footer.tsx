@@ -156,8 +156,8 @@ export function Footer() {
               <button
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    // Open Tarteaucitron panel
-                    window.dispatchEvent(new Event("openTarteaucitronPanel"));
+                    // Open SimpleCookieBanner
+                    window.dispatchEvent(new Event("openCookieBanner"));
                   }
                 }}
                 className="mt-2 rounded-full border border-primary/50 px-4 py-2 text-sm text-primary transition-all hover:bg-primary/10"
