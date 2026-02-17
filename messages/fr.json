@@ -332,9 +332,40 @@
         }
       ]
     },
-    "note": "Licence CMP (bannière de consentement) facturée séparément au coût du fournisseur.",
+    "scanCreditNote": "Si vous décidez ensuite de nous confier les corrections, le montant du scan (199$) est déduit du forfait Correction.",
+    "note": "Système de consentement aux cookies inclus sans frais de licence. Si votre site utilise déjà une solution tierce (Cookiebot, OneTrust, etc.), nous nous adaptons à votre configuration existante.",
     "disclaimer": "Service technique d'accompagnement : ce n'est pas un avis juridique.",
     "currency": "$"
+  },
+  "checkout": {
+    "modal": {
+      "title": "Choisir le forfait",
+      "subtitle": "Informations nécessaires avant le paiement sécurisé",
+      "nameLabel": "Votre nom complet",
+      "namePlaceholder": "ex: Jean Tremblay",
+      "emailLabel": "Votre adresse courriel",
+      "emailPlaceholder": "ex: jean@entreprise.com",
+      "urlLabel": "URL du site à scanner",
+      "urlNote": "Veuillez entrer l'adresse complète de votre site web (obligatoire).",
+      "proceedToPayment": "Procéder au paiement",
+      "redirecting": "Redirection vers Stripe...",
+      "secureCheckout": "Paiement sécurisé",
+      "secureNote": "Le paiement est géré par Stripe. Vos données sont chiffrées.",
+      "error": "Une erreur est survenue lors de la redirection. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Merci pour votre confiance !",
+      "message": "Votre paiement a été traité avec succès.",
+      "details": "Votre scan complet sera effectué sous 24h. Vous recevrez le rapport détaillé par email dès qu'il sera prêt.",
+      "backHome": "Retour à l'accueil"
+    },
+    "cancel": {
+      "title": "Paiement annulé",
+      "message": "Le processus de paiement a été interrompu.",
+      "details": "Aucun montant n'a été débité. Si vous avez rencontré un problème technique, n'hésitez pas à nous contacter.",
+      "tryAgain": "Réessayer le paiement",
+      "backHome": "Retour à l'accueil"
+    }
   },
   "faq": {
     "title": "Questions Fréquentes",

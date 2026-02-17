@@ -332,9 +332,40 @@
         }
       ]
     },
-    "note": "CMP license (consent banner) billed separately at provider cost.",
+    "scanCreditNote": "If you later decide to have us handle the fixes, the scan fee ($199) will be deducted from the Correction package.",
+    "note": "Cookie consent system included with no license fees. If your site already uses a third-party solution (Cookiebot, OneTrust, etc.), we will adapt to your existing configuration.",
     "disclaimer": "Technical support service: this is not legal advice.",
     "currency": "$"
+  },
+  "checkout": {
+    "modal": {
+      "title": "Select package",
+      "subtitle": "Required information before secure payment",
+      "nameLabel": "Your full name",
+      "namePlaceholder": "e.g., John Smith",
+      "emailLabel": "Your email address",
+      "emailPlaceholder": "e.g., john@company.com",
+      "urlLabel": "Website URL to scan",
+      "urlNote": "Please enter the full address of your website (required).",
+      "proceedToPayment": "Proceed to payment",
+      "redirecting": "Redirecting to Stripe...",
+      "secureCheckout": "Secure Checkout",
+      "secureNote": "Payment is managed by Stripe. Your data is encrypted.",
+      "error": "An error occurred during redirection. Please try again."
+    },
+    "success": {
+      "title": "Thank you for your trust!",
+      "message": "Your payment has been processed successfully.",
+      "details": "Your full scan will be performed within 24 hours. You will receive the detailed report by email as soon as it's ready.",
+      "backHome": "Back to home"
+    },
+    "cancel": {
+      "title": "Payment cancelled",
+      "message": "The payment process was interrupted.",
+      "details": "No charges were made. If you encountered a technical problem, please feel free to contact us.",
+      "tryAgain": "Try payment again",
+      "backHome": "Back to home"
+    }
   },
   "faq": {
     "title": "Frequently Asked Questions",

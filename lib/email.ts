@@ -270,3 +270,138 @@ export async function sendContactEmail(
     };
   }
 }
+
+/**
+ * Send payment notification email
+ */
+export async function sendPaymentNotificationEmail(data: {
+  customerName: string;
+  customerEmail: string;
+  websiteUrl: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  status: string;
+  timestamp: string;
+  isToCustomer?: boolean;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  try {
+    const transporter = createTransporter();
+
+    if (!transporter) {
+      console.log(
+        `------- ${data.isToCustomer ? "CUSTOMER" : "ADMIN"} PAYMENT EMAIL SIMULATION -------`,
+      );
+      console.log(JSON.stringify(data, null, 2));
+      console.log(
+        "--------------------------------------------------------------",
+      );
+      return { success: true, messageId: "simulated-no-config" };
+    }
+
+    const isFR = true; // Forcing FR for now as target is Quebec, but could be dynamic
+    const subject = data.isToCustomer
+      ? `Confirmation de votre commande - Loi 25 Radar`
+      : `Paiement Reçu: ${data.planName} - ${data.customerName}`;
+
+    const title = data.isToCustomer
+      ? "Merci pour votre commande"
+      : "Nouveau Paiement Loi 25 Radar";
+
+    const intro = data.isToCustomer
+      ? `Bonjour ${data.customerName}, nous avons bien reçu votre paiement pour le forfait <strong>${data.planName}</strong>. Notre équipe va débuter l'analyse de votre site sous 24h.`
+      : `Un nouveau paiement a été effectué sur Loi 25 Radar.`;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; }
+          .field { margin-bottom: 15px; }
+          .field strong { color: #059669; }
+          .badge { background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+          .footer { background: #F9FAFB; padding: 15px; text-align: center; color: #6B7280; border-top: 1px solid #E5E7EB; }
+          .intro { margin-bottom: 20px; font-size: 16px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>${title}</h1>
+        </div>
+        
+        <div class="content">
+          <p class="intro">${intro}</p>
+          
+          <div class="field">
+            <strong>Détails de la transaction:</strong>
+          </div>
+          
+          <div class="field">
+            <strong>Client:</strong> ${data.customerName}
+          </div>
+          
+          <div class="field">
+            <strong>Email:</strong> ${data.customerEmail}
+          </div>
+          
+          <div class="field"><strong>Site Web à scanner:</strong> <a href="${data.websiteUrl}">${data.websiteUrl}</a></div>
+          
+          <div class="field">
+            <strong>Forfait choisi:</strong> <span class="badge">${data.planName}</span>
+          </div>
+          
+          <div class="field">
+            <strong>Montant payé:</strong> ${data.amount} ${data.currency.toUpperCase()}
+          </div>
+          
+          <div class="field">
+            <strong>Date:</strong> ${new Date(data.timestamp).toLocaleString("fr-CA")}
+          </div>
+        </div>
+        
+        <div class="footer">
+          <p>${data.isToCustomer ? "Loi 25 Radar par Solutions Impact Web" : "Notification automatique de paiement Stripe"}</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const text = `
+${title.toUpperCase()}
+
+${intro}
+
+Client: ${data.customerName}
+Email: ${data.customerEmail}
+Site Web: ${data.websiteUrl}
+Forfait: ${data.planName}
+Montant: ${data.amount} ${data.currency.toUpperCase()}
+Date: ${new Date(data.timestamp).toLocaleString("fr-CA")}
+    `.trim();
+
+    const fromEmail =
+      CONTACT_FORM_TO_EMAIL ||
+      EMAIL_CONFIG.auth.user ||
+      "no-reply@loi25radar.com";
+
+    const mailOptions = {
+      from: `"Loi 25 Radar" <${fromEmail}>`,
+      to: data.isToCustomer
+        ? data.customerEmail
+        : "nakoliss@solutionsimpactweb.com",
+      subject,
+      html,
+      text,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error("Failed to send payment email:", error);
+    return { success: false, error: error.message };
+  }
+}

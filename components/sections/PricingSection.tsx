@@ -5,11 +5,25 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles, Shield, Eye, Plus, AlertCircle } from "lucide-react";
+import {
+  Check,
+  Sparkles,
+  Shield,
+  Eye,
+  Plus,
+  AlertCircle,
+  Info,
+} from "lucide-react";
+import { useState } from "react";
+import { PreCheckoutModal } from "@/components/PreCheckoutModal";
 
 export function PricingSection() {
   const t = useTranslations("pricing");
   const locale = useLocale();
+  const [selectedPlan, setSelectedPlan] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const tiers = [
     {
@@ -21,8 +35,8 @@ export function PricingSection() {
       features: t.raw("tiers.scanOnly.features") as string[],
       cta: t("tiers.scanOnly.cta"),
       icon: Eye,
-      href: "#contact",
       variant: "outline" as const,
+      isDirectPay: true,
     },
     {
       key: "scanFix",
@@ -34,8 +48,8 @@ export function PricingSection() {
       cta: t("tiers.scanFix.cta"),
       popular: true,
       icon: Sparkles,
-      href: "#contact",
       variant: "default" as const,
+      isDirectPay: true,
     },
     {
       key: "complianceManager",
@@ -46,8 +60,8 @@ export function PricingSection() {
       features: t.raw("tiers.complianceManager.features") as string[],
       cta: t("tiers.complianceManager.cta"),
       icon: Shield,
-      href: "#contact",
       variant: "default" as const,
+      isDirectPay: true,
     },
   ];
 
@@ -75,7 +89,9 @@ export function PricingSection() {
           <p className="mt-2 text-sm text-primary">
             ✅ {t("platforms")} : {t("platformsList")}
           </p>
-          <p className="text-sm text-muted-foreground">⏱️ {t("delay")}</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2">
+            <p className="text-sm text-muted-foreground">⏱️ {t("delay")}</p>
+          </div>
         </motion.div>
 
         {/* Main Tiers */}
@@ -145,14 +161,31 @@ export function PricingSection() {
                       </li>
                     ))}
                   </ul>
+
+                  {tier.key === "scanOnly" && (
+                    <div className="mb-6 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                      <p className="text-[11px] leading-relaxed text-primary italic flex gap-2">
+                        <Info className="h-4 w-4 shrink-0" />
+                        {t("scanCreditNote")}
+                      </p>
+                    </div>
+                  )}
+
                   <div className="mt-auto pt-4">
                     <Button
-                      asChild
                       variant={tier.popular ? "default" : tier.variant}
                       className={`w-full ${tier.popular ? "gradient-primary" : ""}`}
+                      onClick={() => {
+                        if (tier.isDirectPay) {
+                          setSelectedPlan({ id: tier.key, name: tier.name });
+                        }
+                      }}
                     >
-                      <a href={tier.href}>{tier.cta}</a>
+                      {tier.cta}
                     </Button>
+                    <p className="text-[10px] text-center text-muted-foreground mt-2 opacity-60">
+                      💳 Paiement sécurisé via Stripe
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -198,17 +231,36 @@ export function PricingSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-8 text-center"
+          className="mt-8 text-center max-w-3xl mx-auto px-4"
         >
-          <p className="text-sm text-muted-foreground">
-            <AlertCircle className="mr-1 inline-block h-4 w-4 text-yellow-400" />
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            <AlertCircle className="mr-2 inline-block h-4 w-4 text-emerald-400" />
             {t("note")}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-4 text-xs text-muted-foreground opacity-70">
             {t("disclaimer")}
           </p>
+
+          <div className="mt-8 pt-8 border-t border-border/50">
+            <p className="text-sm text-muted-foreground">
+              Besoin d&apos;une solution sur mesure ou d&apos;un devis ?
+              <a
+                href="#contact"
+                className="text-primary hover:underline ml-1 font-medium"
+              >
+                Contactez-nous
+              </a>
+            </p>
+          </div>
         </motion.div>
       </div>
+
+      <PreCheckoutModal
+        isOpen={!!selectedPlan}
+        onClose={() => setSelectedPlan(null)}
+        planId={selectedPlan?.id || ""}
+        planName={selectedPlan?.name || ""}
+      />
     </section>
   );
 }
