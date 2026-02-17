@@ -1,11 +1,12 @@
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("STRIPE_SECRET_KEY is not defined");
-}
+// Initialiser Stripe
+// On utilise une clé bidon pour le build si la vraie est absente des variables d'environnement
+const stripeSecretKey =
+  process.env.STRIPE_SECRET_KEY || "sk_test_build_placeholder";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2026-01-28.clover", // Use latest stable API version
+export const stripe = new Stripe(stripeSecretKey, {
+  apiVersion: "2026-01-28.clover" as any,
   typescript: true,
 });
 
