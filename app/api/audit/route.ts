@@ -35,7 +35,7 @@ const CONSENT_PATTERNS = [
   /refuser/i,
 ];
 
-type RatingLevel = "CRITIQUE" | "À AMÉLIORER" | "PASSABLE" | "BIEN";
+type RatingLevel = "CRITIQUE" | "INSUFFISANT" | "À AMÉLIORER" | "BASES DÉTECTÉES";
 
 interface Rating {
   level: RatingLevel;
@@ -131,42 +131,44 @@ async function checkPrivacyPolicy(baseUrl: string): Promise<boolean> {
 }
 
 function getQualitativeRating(passedChecks: number): Rating {
+  const warningSuffix = " ⚠️ Attention: Ce scan ne couvre que les éléments visibles de base. 8 critères supplémentaires plus approfondis n'ont pas été testés.";
+
   if (passedChecks <= 1) {
     return {
       level: "CRITIQUE",
       color: "#EF4444",
       emoji: "\u{1F534}",
       message:
-        "Votre site présente des lacunes majeures en conformité Loi 25. Action immédiate recommandée pour éviter les risques d'amendes.",
+        "Votre site présente des lacunes majeures en conformité Loi 25. Action immédiate recommandée pour éviter les risques d'amendes." + warningSuffix,
     };
   }
 
   if (passedChecks === 2) {
     return {
-      level: "À AMÉLIORER",
+      level: "INSUFFISANT",
       color: "#F97316",
       emoji: "\u{1F7E0}",
       message:
-        "Votre site a quelques éléments de base en place, mais des correctifs importants sont nécessaires pour assurer la conformité complète.",
+        "Votre site a quelques éléments de base en place, mais des correctifs importants sont nécessaires pour assurer la conformité complète." + warningSuffix,
     };
   }
 
   if (passedChecks === 3) {
     return {
-      level: "PASSABLE",
+      level: "À AMÉLIORER",
       color: "#EAB308",
       emoji: "\u{1F7E1}",
       message:
-        "Votre site respecte plusieurs exigences de base, mais certains éléments critiques manquent encore.",
+        "Votre site respecte plusieurs exigences de base, mais certains éléments critiques manquent encore." + warningSuffix,
     };
   }
 
   return {
-    level: "BIEN",
+    level: "BASES DÉTECTÉES",
     color: "#22C55E",
     emoji: "\u{1F7E2}",
     message:
-      "Votre site respecte les 4 critères de base vérifiés. \u26A0\uFE0F Attention: Ce scan ne couvre que les éléments visibles de base. 8 critères supplémentaires plus approfondis n'ont pas été testés.",
+      "Votre site respecte les 4 critères de base vérifiés." + warningSuffix,
   };
 }
 

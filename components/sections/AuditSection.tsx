@@ -19,7 +19,7 @@ interface AuditCheck {
 }
 
 interface AuditRating {
-  level: "CRITIQUE" | "À AMÉLIORER" | "PASSABLE" | "BIEN";
+  level: "CRITIQUE" | "INSUFFISANT" | "À AMÉLIORER" | "BASES DÉTECTÉES";
   color: string;
   emoji: string;
   message: string;
@@ -88,13 +88,21 @@ export function AuditSection() {
   };
 
   const resetAudit = () => {
-    setUrl("");
     setResult(null);
+    setUrl("");
     setError(null);
+    // Use a small timeout to let the DOM update before scrolling
+    setTimeout(() => {
+      document.getElementById("audit")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
   };
 
   const needsHelp =
     result?.rating.level === "CRITIQUE" ||
+    result?.rating.level === "INSUFFISANT" ||
     result?.rating.level === "À AMÉLIORER";
 
   return (
@@ -190,6 +198,16 @@ export function AuditSection() {
                 <p className="text-slate-300 max-w-2xl mx-auto">
                   {result.rating.message}
                 </p>
+                <div className="mt-6">
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-slate-600 text-white hover:bg-slate-700"
+                    onClick={resetAudit}
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {t("cta.scanAnother")}
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-4 mt-8">
@@ -200,20 +218,18 @@ export function AuditSection() {
                 {result.checks.map((check) => (
                   <div
                     key={check.id}
-                    className={`p-6 rounded-lg border-2 ${
-                      check.passed
-                        ? "bg-green-50 border-green-500"
-                        : "bg-red-50 border-red-500"
-                    }`}
+                    className={`p-6 rounded-lg border-2 ${check.passed
+                      ? "bg-green-50 border-green-500"
+                      : "bg-red-50 border-red-500"
+                      }`}
                   >
                     <div className="flex items-start gap-3">
                       <span className="text-3xl">{check.icon}</span>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span
-                            className={`text-2xl ${
-                              check.passed ? "text-green-600" : "text-red-600"
-                            }`}
+                            className={`text-2xl ${check.passed ? "text-green-600" : "text-red-600"
+                              }`}
                           >
                             {check.passed ? "\u2705" : "\u274C"}
                           </span>
@@ -296,7 +312,7 @@ export function AuditSection() {
                         <li>{"\u2713"} Guide de corrections</li>
                       </ul>
                       <a
-                        href="#contact"
+                        href="#pricing"
                         className="block w-full text-center bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700"
                       >
                         Obtenir le scan complet
@@ -318,7 +334,7 @@ export function AuditSection() {
                         <li>{"\u2713"} Support 30 jours</li>
                       </ul>
                       <a
-                        href="#contact"
+                        href="#pricing"
                         className="block w-full text-center bg-white text-purple-700 py-3 rounded-lg font-semibold hover:bg-slate-100"
                       >
                         On corrige tout pour vous
@@ -390,7 +406,7 @@ export function AuditSection() {
                       <li>{"\u2713"} Certificat de conformité (si 100%)</li>
                     </ul>
                     <a
-                      href="#contact"
+                      href="#pricing"
                       className="block w-full text-center bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700"
                     >
                       Obtenir le scan complet - 199$
