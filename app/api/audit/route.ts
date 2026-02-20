@@ -10,6 +10,11 @@ const MAX_HTML_BYTES = 1_000_000;
 const scanCache = new Map<string, { data: ScanResponse; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000;
 
+// Rate limiting: max 10 requests per IP per minute
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW = 60 * 1000;
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+
 const PRIVACY_EMAILS = [
   "privacy@",
   "confidentialite@",
@@ -362,8 +367,46 @@ setInterval(() => {
   }
 }, CACHE_DURATION);
 
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { count: 1, windowStart: now });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitMap.entries()) {
+    if (now - value.windowStart > RATE_LIMIT_WINDOW) {
+      rateLimitMap.delete(key);
+    }
+  }
+}, RATE_LIMIT_WINDOW);
+
 export async function POST(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+      request.headers.get("x-real-ip") ??
+      "unknown";
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a minute before trying again." },
+        { status: 429, headers: { "Retry-After": "60" } },
+      );
+    }
+
     const body = await request.json();
 
     const parsed = auditSchema.safeParse(body);
